@@ -4,6 +4,7 @@ import { useState } from 'react';
 
 export default function Home() {
     const [inputValue, setInputValue] = useState('');
+    const [sentiment, setSentiment] = useState('');
 
     const handleInputChange = (e) => {
         setInputValue(e.target.value);
@@ -11,12 +12,12 @@ export default function Home() {
 
     const handleButtonClick = async () => {
         try {
-            const response = await fetch('http://127.0.0.1:8000/api/echo/', {
+            const response = await fetch('http://127.0.0.1:8000/api/predict/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ message: inputValue }),
+                body: JSON.stringify({ text: inputValue }),
             });
 
             if (!response.ok) {
@@ -25,6 +26,7 @@ export default function Home() {
 
             const data = await response.json();
             console.log(data);
+            setSentiment(data.sentiment);
         } catch (error) {
             console.error('Error:', error);
             alert('Failed to send data to the API');
@@ -69,6 +71,11 @@ export default function Home() {
                     Submit
                 </button>
             </div>
+            {sentiment && (
+                <div style={{ marginTop: '20px', fontSize: '18px' }}>
+                    <p>Sentiment: {sentiment}</p>
+                </div>
+            )}
             </div>
         </div>
     );

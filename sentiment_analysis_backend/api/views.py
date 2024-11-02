@@ -1,19 +1,17 @@
 from django.shortcuts import render
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from .serializers import MessageSerializer
-
-# Create your views here.
-@api_view(['GET'])
-def hello_world(request):
-    data = {"message": "Hello, world!"}
-    return Response(data)
+from .serializers import TextSerializer
+from .utils import predict
 
 @api_view(['POST'])
-def echo_message(request):
-    # Use the serializer to validate incoming data
-    serializer = MessageSerializer(data=request.data)
+def predict_sentiment(request):
+    serializer = TextSerializer(data=request.data)
     if serializer.is_valid():
-        message = serializer.validated_data['message']
-        return Response({"message": f"You said: {message}"})
+        text = serializer.validated_data['text']
+        sentiment = predict(text)
+        if sentiment == 0:
+            return Response({"sentiment": "Negative"})
+        elif sentiment == 1:
+            return Response({"sentiment": "Positive"})
     return Response(serializer.errors, status=400)
