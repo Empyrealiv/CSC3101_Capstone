@@ -25,8 +25,7 @@ export default function Home() {
             }
 
             const data = await response.json();
-            console.log(data);
-            setSentiment(data.sentiment);
+            alert('The text is '+data.sentiment);
         } catch (error) {
             console.error('Error:', error);
             alert('Failed to send data to the API');
