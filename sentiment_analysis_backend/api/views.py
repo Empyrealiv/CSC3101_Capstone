@@ -3,6 +3,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .serializers import TextSerializer
 from .utils import predict
+from .utils import model_list
 
 @api_view(['POST'])
 def predict_sentiment(request):
@@ -15,3 +16,7 @@ def predict_sentiment(request):
         elif sentiment == 1:
             return Response({"sentiment": "Positive"})
     return Response(serializer.errors, status=400)
+
+@api_view(['GET'])
+def get_models(request):
+    return Response({"models": model_list})

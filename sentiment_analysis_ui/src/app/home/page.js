@@ -1,8 +1,12 @@
 'use client';
 
 import { useState } from 'react';
+import SentimentInputField from '../components/sentimentInputField.js';
+import ModelDropDown from '../components/modelDropDown.js';
 
 export default function Home() {
+
+    
     const [inputValue, setInputValue] = useState('');
     const [sentiment, setSentiment] = useState('');
 
@@ -44,19 +48,10 @@ export default function Home() {
         >
             <div style={{ padding: '20px' }}>
                 <h1 style={{ padding: '20px' }}>Sentiment Analysis</h1>
-                <input
-                    type="text"
+                <ModelDropDown> </ModelDropDown>
+                <SentimentInputField 
                     value={inputValue}
                     onChange={handleInputChange}
-                    placeholder="Enter text here"
-                    style={{
-                        padding: '8px',
-                        fontSize: '16px',
-                        height: '30vh',
-                        width: '100%',             
-                        verticalAlign: 'top',       
-                        resize: 'none'              
-                    }}
                 />
             <div style={{ textAlign: 'center', marginTop: '10px' }}>
                 <button
