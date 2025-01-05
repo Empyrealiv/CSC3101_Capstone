@@ -1,19 +1,14 @@
-import logo from './logo.svg';
 import './css/index.css';
 import { Login } from './Pages/Login/Login';
-import { Routes, Route, Link } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 import { Dashboard } from './Pages/Dashboard';
+import { Navbar } from './Pages/navbar';
 
 
 function App() {
   return (
     <div>
-      <nav>
-        <ul>
-          <li><Link to="/login">Login</Link></li>
-          <li><Link to="/dashboard">Dashboard</Link></li>
-        </ul>
-      </nav>
+      <Navbar />
       <main>
         <Routes>
           <Route path="/login" element={<Login />} />
