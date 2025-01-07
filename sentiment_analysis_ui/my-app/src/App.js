@@ -1,20 +1,19 @@
 import './css/index.css';
-import { Login } from './Pages/Login/Login';
 import { Routes, Route } from 'react-router-dom';
-import { Dashboard } from './Pages/Dashboard';
 import { Navbar } from './Pages/navbar';
-
+import Home from './Pages/Home/Home';
+import Login from './Pages/Login/Login';
 
 function App() {
   return (
-    <div>
+    <div className="app-container">
       <Navbar />
-      <main>
+      <div className="app-content">
         <Routes>
           <Route path="/login" element={<Login />} />
-          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/home" element={<Home />} />
         </Routes>
-      </main>
+      </div>
     </div>
   );
 }

@@ -11,12 +11,12 @@ const SentimentChart = ({ inputData }) => {
     ];
 
     return (
-        <PieChart width={window.innerWidth * 0.2} height={window.innerWidth * 0.2}>
+        <PieChart width={window.innerWidth * 0.2} height={window.innerWidth * 0.18}>
         <Pie
             data={pieData}
             cx="50%"
             cy="50%"
-            outerRadius={window.innerWidth * 0.075}
+            outerRadius={window.innerWidth * 0.06}
             fill="#8884d8"
             dataKey="value"
             label

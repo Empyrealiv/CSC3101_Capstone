@@ -32,9 +32,9 @@ export const Navbar = () => {
                             <NavLink
                                 className="nav-link"
                                 activeClassName="active"
-                                to="/dashboard"
+                                to="/home"
                             >
-                                Dashboard
+                                Home
                             </NavLink>
                         </li>
                         <li className="nav-item">
