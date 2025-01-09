@@ -1,5 +1,4 @@
 import { PieChart, Pie, Cell, Tooltip, Legend } from 'recharts';
-import Chart from './Chart.js';
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
 

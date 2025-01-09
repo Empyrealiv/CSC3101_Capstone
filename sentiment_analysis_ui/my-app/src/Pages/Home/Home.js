@@ -4,7 +4,6 @@ import DataTable from './Datatable.js';
 import SentimentChart from './Chart.js';
 import UploadCSVButton from '../Components/UploadCSVButton.js';
 import '../../css/Home/index.css';
-import ReactFileReader from "react-file-reader";
 
 const testData = [
     { text: 'I love React!', polarity: 'Positive' },
