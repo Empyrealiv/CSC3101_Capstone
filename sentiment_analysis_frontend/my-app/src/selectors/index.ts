@@ -1,0 +1,1 @@
+export const selectMultiPredictState = (state) => state.multiPredict

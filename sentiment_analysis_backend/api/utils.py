@@ -3,30 +3,37 @@ from torch.nn.functional import softmax
 import torch
 import os
 
+TOKEN_LIMIT = 400
+
 MODEL_1_PATH = os.path.join(os.path.dirname(__file__), '..', '..', 'sentiment_analysis_backend', 'Models', 'Model_1')
-model_1 = BertForSequenceClassification.from_pretrained(MODEL_1_PATH)
-tokenizer_1 = BertTokenizer.from_pretrained(MODEL_1_PATH)
-model_1.eval()
-
 MODEL_2_PATH = os.path.join(os.path.dirname(__file__), '..', '..', 'sentiment_analysis_backend', 'Models', 'Model_2')
-model_2 = BertForSequenceClassification.from_pretrained(MODEL_2_PATH)
-tokenizer_2 = BertTokenizer.from_pretrained(MODEL_2_PATH)
-model_2.eval()
 
-model_list = ['MODEL_1', 'MODEL_2']
+models = {
+    'Base Model': {
+        'model': BertForSequenceClassification.from_pretrained(MODEL_1_PATH),
+        'tokenizer': BertTokenizer.from_pretrained(MODEL_1_PATH),
+    },
+    'HLA Model': {
+        'model': BertForSequenceClassification.from_pretrained(MODEL_2_PATH),
+        'tokenizer': BertTokenizer.from_pretrained(MODEL_2_PATH),
+    }
+}
 
-def predict(text: str):
-    inputs = tokenizer_1(text, return_tensors="pt", truncation=True, padding=True, max_length=512)
+for model_info in models.values():
+    model_info['model'].eval()
+
+def predict(text: str, model_name: str):
+    if model_name not in models:
+        raise ValueError(f"Invalid model name: {model_name}. Available models: {list(models.keys())}")
+
+    model_info = models[model_name]
+    tokenizer = model_info['tokenizer']
+    model = model_info['model']
+
+    inputs = tokenizer(text, return_tensors="pt", truncation=True, padding=True, max_length=TOKEN_LIMIT)
+
     with torch.no_grad():
-        outputs = model_1(**inputs)
-    logits = outputs.logits
-    prediction = torch.argmax(logits, dim=-1).item()
-    return prediction
-
-def predict_with_confidence(text: str):
-    inputs = tokenizer_1(text, return_tensors="pt", truncation=True, padding=True, max_length=512)
-    with torch.no_grad():
-        outputs = model_1(**inputs)
+        outputs = model(**inputs)
     logits = outputs.logits
     
     probabilities = softmax(logits, dim=-1)
