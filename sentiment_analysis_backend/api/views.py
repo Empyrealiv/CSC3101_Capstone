@@ -26,22 +26,26 @@ def predict_sentiment(request):
 
 @api_view(['POST'])
 def multi_predict_sentiment(request):
-    serializer = MultiTextSerializer(data=request.data)
-    if serializer.is_valid():
-        texts = serializer.validated_data['texts']
-        results = []
+    try: 
+        serializer = MultiTextSerializer(data=request.data)
+        if serializer.is_valid():
+            texts = serializer.validated_data['texts']
+            model_name = serializer.validated_data['model_name']
+            results = []
 
-        for text in texts:
-            sentiment = predict(text)
-            sentiment_label = "Positive" if sentiment == 1 else "Negative"
-            results.append({"text": text, "sentiment": sentiment_label})
+            for text in texts:
+                sentiment, confidence= predict(text, model_name)
+                sentiment_label = "Positive" if sentiment == 1 else "Negative"
+                results.append({"text": text, "sentiment": sentiment_label, "confidence": confidence})
 
-        responseValue = {"results": results}
+            responseValue = {"results": results}
 
-        return Response(responseValue)
-    else:
-        return Response(serializer.errors, status=400)
+            return Response(responseValue)
+        else:
+            return Response(serializer.errors, status=400)
+    except Exception as e:
+        return Response({"error": str(e)}, status=500)
 
 @api_view(['GET'])
-def get_models():
+def get_models(request):
     return Response({"models": list(models.keys())})

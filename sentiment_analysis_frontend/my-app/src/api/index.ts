@@ -12,10 +12,9 @@ const predictSentiment = async (text: string, model: string) => {
   return await axios.post(API_URL + endpoint, payload);
 }
 
-const multiPredictSentiment = async (texts: string[]): Promise<IMultiPredictResponse> => {
-  const endpoint = "multiPredict/";
-  const payload = { texts };
-  return await axios.post(API_URL + endpoint, payload);
+const multiPredictSentiment = async (payload): Promise<IMultiPredictResponse> => {
+  const endpoint = "multiPredict/"
+  return await axios.post(API_URL + endpoint, payload)
 }
 
 const getModels = async () => {
