@@ -21,11 +21,13 @@ import { PREDICTED_STATES } from "./constants.ts";
 import { useSelector } from "react-redux";
 import { selectuploadCSVState } from "../../selectors/index.ts";
 import { ToastManager } from "../../components/ToastManager.tsx";
+import { IPredictResponse } from "../../types/index.ts";
 
 export const Dashboard = () => {
   const [predictedState, setPredictedState] = useState<string>(
-    PREDICTED_STATES.single
+    ''
   );
+  const [predictResult, setPredictResult] = useState<IPredictResponse | null>()
   const [userInput, setUserInput] = useState<string>("");
   const [models, setModels] = useState<string[]>([]);
   const [selectedModel, setSelectedModel] = useState<string>("Select a Model");
@@ -37,7 +39,7 @@ export const Dashboard = () => {
       setLoading(true);
       setPredictedState(PREDICTED_STATES.single);
       const response = await sentimentApi.predictSentiment(text, selectedModel);
-      alert(response.data.sentiment);
+      handlePredictResponse(response.data);
     } catch (error: any) {
       alert(error.message);
     } finally {
@@ -60,6 +62,10 @@ export const Dashboard = () => {
     };
     fetchModels();
   }, []);
+
+  const handlePredictResponse = (data: IPredictResponse) => {
+    setPredictResult(data);
+  }
 
   return (
     <div className="page-container">
@@ -97,11 +103,18 @@ export const Dashboard = () => {
         </Form>
       </Container>
 
+        {/* Single Predict Container */}
+        {predictedState === ''  && (
+        <Container className="display-container">
+          <p>Make a prediction!</p>
+        </Container>
+      )}
+
       {/* Single Predict Container */}
       {predictedState === PREDICTED_STATES.single && (
         <Container className="display-container">
-          <p>The text was predicted with a sentiment of positive</p>
-          <p>Confidence: 0.98</p>
+          <p>The text was predicted with a sentiment of {predictResult?.sentiment}</p>
+          <p>Confidence: {predictResult?.confidence}</p>
           <div className="text-container">
             <p>
               Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer
@@ -127,8 +140,14 @@ export const Dashboard = () => {
       {/* Multi Predict Container */}
       {predictedState === PREDICTED_STATES.multi && (
         <Container className="display-container">
-          <DataTable />
-          <Customchart />
+          <Row>
+            <Col className="custom-chart-container">
+              <Customchart />
+            </Col>
+            <Col>
+              <DataTable />
+            </Col>
+          </Row>
         </Container>
       )}
 

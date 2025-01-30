@@ -46,6 +46,7 @@ const UploadCSVButton: React.FC<FileUploadButtonProps> = ({
 
     const formData = new FormData()
     formData.append("file", file)
+    formData.append("model_name", selectedModel)
 
     try {
       setPredictedState(PREDICTED_STATES.multi)

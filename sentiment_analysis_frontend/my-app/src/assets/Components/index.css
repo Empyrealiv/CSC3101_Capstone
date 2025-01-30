@@ -1,0 +1,25 @@
+.text-column {
+  max-width: 20vw;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.custom-chart-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: auto;
+}
+
+.pie-chart-container {
+  border: 2px solid black;
+  border-radius: 5px;
+}
+
+.custom-table-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: auto;
+}

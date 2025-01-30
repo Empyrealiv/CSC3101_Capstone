@@ -72,10 +72,3 @@ def predict_batch(text: str, model_name: str):
         logits = model(**inputs).logits
     predictions = torch.softmax(logits, dim=-1).cpu().numpy()
     return predictions
-
-def predict_and_evaluate():
-    data = pd.read_csv('data.csv')
-    texts = data["text"].tolist()
-    labels = data["polarity"].tolist()
-
-    preds = predict_batch(texts, 'Base Model')

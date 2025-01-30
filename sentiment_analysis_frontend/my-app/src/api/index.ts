@@ -1,5 +1,4 @@
 import axios from "axios";
-import { IUploadCSVResponse } from "../types/index.ts";
 
 const API_URL = "http://127.0.0.1:8000/api/";
 

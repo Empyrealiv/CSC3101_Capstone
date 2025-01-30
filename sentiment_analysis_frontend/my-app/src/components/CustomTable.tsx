@@ -13,7 +13,7 @@ const DataTable = () => {
     if (uploadCSVData.isLoading) {
       return
     }
-    console.log(uploadCSVData.data)
+    setData(uploadCSVData.data)
   }, [uploadCSVData])
 
   return (
@@ -23,6 +23,7 @@ const DataTable = () => {
           <th scope="col">#</th>
           <th scope="col">Text</th>
           <th scope="col">Polarity</th>
+          <th scope="col">Confidence</th>
         </tr>
       </thead>
       <tbody>
@@ -32,6 +33,7 @@ const DataTable = () => {
                 <th scope="row">{index + 1}</th>
                 <td className="text-column">{row.text}</td>
                 <td>{row.sentiment}</td>
+                <td>{row.confidence}</td>
               </tr>
             ))
           ) : (

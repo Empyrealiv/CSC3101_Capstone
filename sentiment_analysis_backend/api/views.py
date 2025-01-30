@@ -15,9 +15,9 @@ def predict_sentiment(request):
             model_name = serializer.validated_data['model_name']
             sentiment, confidence = predict(text, model_name)
             if sentiment == 0:
-                return Response({"sentiment": "Negative", "confidence": confidence})
+                return Response({"sentiment": "NEGATIVE", "confidence": confidence})
             elif sentiment == 1:
-                return Response({"sentiment": "Positive", "confidence": confidence})
+                return Response({"sentiment": "POSITIVE", "confidence": confidence})
         return Response(serializer.errors, status=400)
     except Exception as e:
         return Response({"error": str(e)}, status=500)
@@ -54,17 +54,25 @@ def upload_csv(request):
     if "file" not in request.FILES:
         return Response({"error": "No file provided"}, status=400)
 
-    csv_file = request.FILES["file"]
+    file = request.FILES["file"]
+    model_name = request.POST.get("model_name")
+
+    if not model_name:
+        return Response({"error": "Missing model_name parameter"}, status=400)
 
     try:
-        df = pd.read_csv(csv_file)
-        preview_data = df.head().to_dict(orient="records")
+        df = pd.read_csv(file)
+        if "text" not in df.columns:
+            return Response({"error": "Column 'text' not found in CSV file"}, status=400)
+        
+        results = []
+        for text in df["text"]:
+            print(text)
+            sentiment, confidence = predict(text, model_name)
+            sentiment_label = "Positive" if sentiment == 1 else "Negative"
+            results.append({"text": text, "sentiment": sentiment_label, "confidence": confidence})
 
-        return Response({
-            "message": "CSV received successfully!",
-            "columns": list(df.columns),
-            "preview": preview_data
-        })
-
+        return Response(results)
+        
     except Exception as e:
         return Response({"error": str(e)}, status=400)

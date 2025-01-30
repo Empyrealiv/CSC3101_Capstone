@@ -17,10 +17,6 @@ export const ToastManager = () => {
         zIndex: 1050,
       }}
     >
-      <Button onClick={() => dispatch(addToast("User-triggered toast!"))}>
-        Show Toast
-      </Button>
-
       {toasts && toasts.toastState.map((toast) => (
         <Toast key={toast.id} onClose={() => dispatch(removeToast(toast.id))}>
           <Toast.Header>
