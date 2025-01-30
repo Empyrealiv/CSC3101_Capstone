@@ -1,31 +1,33 @@
 import axios from "axios";
-import { IMultiPredictResponse } from "../types/index.ts";
+import { IUploadCSVResponse } from "../types/index.ts";
 
 const API_URL = "http://127.0.0.1:8000/api/";
 
 const predictSentiment = async (text: string, model: string) => {
   const endpoint = "predict/";
-  const payload = { 
+  const payload = {
     text: text,
-    model_name: model
+    model_name: model,
   };
   return await axios.post(API_URL + endpoint, payload);
-}
-
-const multiPredictSentiment = async (payload): Promise<IMultiPredictResponse> => {
-  const endpoint = "multiPredict/"
-  return await axios.post(API_URL + endpoint, payload)
-}
+};
 
 const getModels = async () => {
-    const endpoint = "getModels/";
-    return await axios.get(API_URL + endpoint);
-}
+  const endpoint = "getModels/";
+  return await axios.get(API_URL + endpoint);
+};
+
+const uploadCSV = async (formData: FormData) => {
+  const endpoint = "uploadCSV/";
+  return await axios.post(API_URL + endpoint, formData, {
+    headers: { "Content-Type": "multipart/form-data" },
+  });
+};
 
 const sentimentApi = {
   predictSentiment,
-  multiPredictSentiment,
-  getModels
-}
+  getModels,
+  uploadCSV,
+};
 
-export default sentimentApi
+export default sentimentApi;

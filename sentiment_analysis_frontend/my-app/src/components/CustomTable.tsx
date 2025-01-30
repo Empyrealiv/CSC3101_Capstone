@@ -1,21 +1,20 @@
 import React, { use, useEffect, useState } from 'react';
 import Table from 'react-bootstrap/Table';
 import { useSelector, useDispatch } from "react-redux"
-import { selectMultiPredictState } from "../selectors/index.ts"
-import { multiPredictRequest } from "../actions/index.ts"
-import { IMultiPredictResponseItem } from '../types/index'
+import { selectuploadCSVState } from "../selectors/index.ts"
+import { IUploadCSVResponseItem } from '../types/index'
 
 const DataTable = () => {
 
-  const [data, setData] = useState<IMultiPredictResponseItem[]>([])
-  const multiPredictData = useSelector(selectMultiPredictState)
+  const [data, setData] = useState<IUploadCSVResponseItem[]>([])
+  const uploadCSVData = useSelector(selectuploadCSVState)
 
   useEffect(() => {
-    if (multiPredictData.isLoading) {
+    if (uploadCSVData.isLoading) {
       return
     }
-    setData(multiPredictData.data.results)
-  }, [multiPredictData])
+    console.log(uploadCSVData.data)
+  }, [uploadCSVData])
 
   return (
     <Table bordered hover>

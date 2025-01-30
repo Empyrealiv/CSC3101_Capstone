@@ -1,1 +1,2 @@
-export const selectMultiPredictState = (state) => state.multiPredict
+export const selectuploadCSVState = (state) => state.uploadCSV
+export const selectToastManagerState = (state) => state.toastManager

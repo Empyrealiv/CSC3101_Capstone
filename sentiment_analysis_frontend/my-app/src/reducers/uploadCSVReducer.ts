@@ -1,33 +1,33 @@
-import { IMultiPredictResponse } from '../types/index'
+import { IUploadCSVResponseItem } from '../types/index'
 
 type StateType = {
-    data: IMultiPredictResponse[]
+    data: IUploadCSVResponseItem[]
     isLoading: boolean
     error: any
 }
 
 const initialState: StateType = {
     data: [],
-    isLoading: true,
+    isLoading: false,
     error: undefined
 }
 
-export const multiPredictReducer = (state = initialState, action: {type: string, payload: any}): StateType => {
+export const uploadCSVReducer = (state = initialState, action: {type: string, payload: any}): StateType => {
     switch (action.type) {
-        case 'MULTI_PREDICT_REQUEST':
+        case 'UPLOAD_CSV_REQUEST':
             return {
                 ...state,
                 isLoading: true,
                 error: undefined
             }
-        case 'MULTI_PREDICT_SUCCESS':
+        case 'UPLOAD_CSV_SUCCESS':
             return {
                 ...state,
                 data: action.payload,
                 isLoading: false,
                 error: undefined
             }
-        case 'MULTI_PREDICT_FAILURE':
+        case 'UPLOAD_CSV_FAILURE':
             return {
                 ...state,
                 isLoading: false,

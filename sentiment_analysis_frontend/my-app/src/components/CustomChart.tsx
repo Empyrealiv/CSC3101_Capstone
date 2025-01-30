@@ -1,22 +1,21 @@
 import React, { useEffect, useState } from "react";
 import { PieChart, Pie, Cell, Tooltip, Legend } from "recharts";
 import { useSelector, useDispatch } from "react-redux";
-import { selectMultiPredictState } from "../selectors/index.ts";
-import { multiPredictRequest } from "../actions/index.ts";
-import { IMultiPredictResponseItem } from "../types/index";
+import { selectuploadCSVState } from "../selectors/index.ts";
+import { IUploadCSVResponseItem } from "../types/index";
 
 const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
 
 const Customchart = () => {
-  const [data, setData] = useState<IMultiPredictResponseItem[]>([]);
-  const multiPredictData = useSelector(selectMultiPredictState);
+  const [data, setData] = useState<IUploadCSVResponseItem[]>([]);
+  const uploadCSVData = useSelector(selectuploadCSVState);
 
-  useEffect(() => {
-    if (multiPredictData.isLoading) {
-      return;
-    }
-    setData(multiPredictData.data.results);
-  }, [multiPredictData]);
+  // useEffect(() => {
+  //   if (uploadCSVData.isLoading) {
+  //     return;
+  //   }
+  //   setData(uploadCSVData.data.results);
+  // }, [uploadCSVData]);
 
   const pieData = [
     {

@@ -18,10 +18,9 @@ import FileUploadButton from "../../components/FileUploadButton.tsx";
 import sentimentApi from "../../api/index.ts";
 import "../../assets/Dashboard/index.css";
 import { PREDICTED_STATES } from "./constants.ts";
-import { useSelector, useDispatch } from "react-redux";
-import { selectMultiPredictState } from "../../selectors/index.ts";
-import { multiPredictRequest } from "../../actions/index.ts";
-import { IMultiPredictResponseItem } from "../../types/index";
+import { useSelector } from "react-redux";
+import { selectuploadCSVState } from "../../selectors/index.ts";
+import { ToastManager } from "../../components/ToastManager.tsx";
 
 export const Dashboard = () => {
   const [predictedState, setPredictedState] = useState<string>(
@@ -31,7 +30,7 @@ export const Dashboard = () => {
   const [models, setModels] = useState<string[]>([]);
   const [selectedModel, setSelectedModel] = useState<string>("Select a Model");
   const [loading, setLoading] = useState<boolean>(false);
-  const multiPredictData = useSelector(selectMultiPredictState);
+  const uploadCSVData = useSelector(selectuploadCSVState);
 
   const handlePredict = async (text: string) => {
     try {
@@ -65,8 +64,10 @@ export const Dashboard = () => {
   return (
     <div className="page-container">
 
+      <ToastManager />
+
       {/* Loading Overlay */}
-      {(loading || multiPredictData.isLoading) && (
+      {(loading || uploadCSVData.isLoading) && (
         <div className="loading-overlay">
           <Spinner animation="border" variant="light" />
           <p>Loading...</p>

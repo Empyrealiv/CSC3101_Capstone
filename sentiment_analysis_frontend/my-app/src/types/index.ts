@@ -11,11 +11,16 @@ export const TEST_DATA = [
     { text: 'This is frustrating.', polarity: 'Negative' },
 ]
 
-export interface IMultiPredictResponseItem {
+export interface IUploadCSVResponseItem {
     text: string
     sentiment: string
 }
 
-export type IMultiPredictResponse = {
-    resuls: IMultiPredictResponseItem[]
+export type IUploadCSVResponse = {
+    resuls: IUploadCSVResponseItem[]
+}
+
+export interface IToastState {
+    id: string
+    message: string
 }

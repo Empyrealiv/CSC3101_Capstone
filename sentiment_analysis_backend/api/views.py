@@ -1,12 +1,10 @@
-from django.shortcuts import render
-from django.contrib.auth import authenticate
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import api_view, parser_classes
+from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
-from rest_framework_simplejwt.tokens import RefreshToken
 from .serializers import TextSerializer, MultiTextSerializer
 from .utils import predict
 from .utils import models
+import pandas as pd
 
 @api_view(['POST'])
 def predict_sentiment(request):
@@ -49,3 +47,24 @@ def multi_predict_sentiment(request):
 @api_view(['GET'])
 def get_models(request):
     return Response({"models": list(models.keys())})
+
+@api_view(["POST"])
+@parser_classes([MultiPartParser, FormParser])
+def upload_csv(request):
+    if "file" not in request.FILES:
+        return Response({"error": "No file provided"}, status=400)
+
+    csv_file = request.FILES["file"]
+
+    try:
+        df = pd.read_csv(csv_file)
+        preview_data = df.head().to_dict(orient="records")
+
+        return Response({
+            "message": "CSV received successfully!",
+            "columns": list(df.columns),
+            "preview": preview_data
+        })
+
+    except Exception as e:
+        return Response({"error": str(e)}, status=400)

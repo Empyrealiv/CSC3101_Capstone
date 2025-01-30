@@ -4,3 +4,5 @@ django-cors-headers
 transformers
 torch
 djangorestframework-simplejwt
+scikit-learn
+pandas

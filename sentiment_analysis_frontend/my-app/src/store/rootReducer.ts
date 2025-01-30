@@ -1,8 +1,10 @@
 import { combineReducers } from "redux"
-import { multiPredictReducer } from "../reducers/multiPredictReducer.ts"
+import { uploadCSVReducer } from "../reducers/uploadCSVReducer.ts"
+import { toastManagerReducer } from "../reducers/toastManagerReducer.ts"
 
 const rootReducer = combineReducers({
-    multiPredict: multiPredictReducer
+    uploadCSV: uploadCSVReducer,
+    toastManager: toastManagerReducer
 })
 
 export default rootReducer
