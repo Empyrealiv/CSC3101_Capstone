@@ -10,16 +10,27 @@
   align-items: center;
   justify-content: center;
   margin: auto;
-}
-
-.pie-chart-container {
+  background-color: white;
   border: 2px solid black;
   border-radius: 5px;
 }
 
 .custom-table-container {
   display: flex;
-  align-items: center;
   justify-content: center;
-  margin: auto;
+  overflow-y: auto;
+  max-height: 35vh;
+}
+
+.custom-table-container::-webkit-scrollbar {
+  width: 8px; /* Width of the scrollbar */
+}
+
+.custom-table-container::-webkit-scrollbar-thumb {
+  background-color: #007bff; /* Color of the scrollbar thumb */
+  border-radius: 10px; /* Rounded corners for the scrollbar */
+}
+
+.custom-table-container::-webkit-scrollbar-track {
+  background-color: #f0f0f0; /* Background of the scrollbar track */
 }

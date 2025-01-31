@@ -17,7 +17,6 @@ interface FileUploadButtonProps {
 const UploadCSVButton: React.FC<FileUploadButtonProps> = ({
   selectedModel,
   setPredictedState,
-  setLoading,
 }) => {
   const dispatch = useDispatch();
   const fileInputRef = useRef<HTMLInputElement | null>(null);

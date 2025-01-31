@@ -65,14 +65,23 @@ def upload_csv(request):
         if "text" not in df.columns:
             return Response({"error": "Column 'text' not found in CSV file"}, status=400)
         
-        results = []
-        for text in df["text"]:
-            print(text)
-            sentiment, confidence = predict(text, model_name)
-            sentiment_label = "Positive" if sentiment == 1 else "Negative"
-            results.append({"text": text, "sentiment": sentiment_label, "confidence": confidence})
-
-        return Response(results)
+        if "sentiment" not in df.columns:
+            handleMultiPredict(df["text"], model_name)
+        else:
+            handleMultiPredictAndEvaluate(df["text"], model_name)
         
     except Exception as e:
         return Response({"error": str(e)}, status=400)
+    
+def handleMultiPredict(texts: pd.Series, model_name: str):
+    results = []
+
+    for text in texts:
+        sentiment, confidence= predict(text, model_name)
+        sentiment_label = "Positive" if sentiment == 1 else "Negative"
+        results.append({"text": text, "sentiment": sentiment_label, "confidence": confidence})
+
+    return Response(results)
+
+def handleMultiPredictAndEvaluate(texts: pd.Series, model_name: str):
+    pass

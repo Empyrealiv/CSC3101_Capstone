@@ -12,8 +12,9 @@ import {
   Dropdown,
   Spinner
 } from "react-bootstrap";
-import DataTable from "../../components/CustomTable.tsx";
+import CustomDataTable from "../../components/CustomDataTable.tsx";
 import Customchart from "../../components/CustomChart.tsx";
+import CustomEvalDataTable from "../../components/CustomEvalDataTable.tsx";
 import FileUploadButton from "../../components/FileUploadButton.tsx";
 import sentimentApi from "../../api/index.ts";
 import "../../assets/Dashboard/index.css";
@@ -29,6 +30,7 @@ export const Dashboard = () => {
   );
   const [predictResult, setPredictResult] = useState<IPredictResponse | null>()
   const [userInput, setUserInput] = useState<string>("");
+  const [textInfo, setTextInfo] = useState<string>("");
   const [models, setModels] = useState<string[]>([]);
   const [selectedModel, setSelectedModel] = useState<string>("Select a Model");
   const [loading, setLoading] = useState<boolean>(false);
@@ -140,14 +142,25 @@ export const Dashboard = () => {
       {/* Multi Predict Container */}
       {predictedState === PREDICTED_STATES.multi && (
         <Container className="display-container">
+          <Container>
           <Row>
-            <Col className="custom-chart-container">
+            <Col xs={4} className="custom-chart-container">
               <Customchart />
             </Col>
-            <Col>
-              <DataTable />
+            <Col xs={8} className="custom-table-container">
+              <CustomDataTable setTextInfo={setTextInfo}/>
             </Col>
           </Row>
+          <br />
+          <Row className="second-row">
+            <Col xs={4} className="evaluation-container">
+              <p>{textInfo}</p>
+            </Col>
+            <Col xs={8} className="custom-table-container">
+              <CustomEvalDataTable />
+            </Col>
+          </Row>
+          </Container>
         </Container>
       )}
 
@@ -160,6 +173,12 @@ export const Dashboard = () => {
               placeholder="Enter your text here..."
               value={userInput}
               onChange={(e) => setUserInput(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  handlePredict(userInput);
+                }
+              }}
             />
           </Form.Group>
           <div className="input-buttons">

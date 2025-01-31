@@ -1,5 +1,5 @@
 export const TEST_DATA = [
-    { text: "I love this product! It's amazing.", polarity: "Positive", confidence: 0.9920519590377808 },
+    { text: "I love this product! It's amazing. It's amazing. It's amazing. It's amazing.", polarity: "Positive", confidence: 0.9920519590377808 },
     { text: "Absolutely terrible experience.", polarity: "Negative", confidence: 0.9858275651931763 },
     { text: "The movie was fantastic, I enjoyed every moment.", polarity: "Positive", confidence: 0.9916896820068359 },
     { text: "Worst customer service ever.", polarity: "Negative", confidence: 0.9856861233711243 },
