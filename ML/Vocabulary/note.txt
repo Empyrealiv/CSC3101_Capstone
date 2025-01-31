@@ -1,0 +1,9 @@
+slang_words contains the full list of slang from the hugging face dataset
+
+slang_scores contains the TFIDF scores obtained from the combined dataset
+
+slang_scores_sample contains a manual selection of slang from slang_scores
+
+slang_scores_final contains the final list of vocabulary to be added to the model after analyzing slang usage in the dataset
+
+emoji_score.csv contains the TFIDF scores obtained from the combined dataset
