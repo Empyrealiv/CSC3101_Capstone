@@ -1,0 +1,18 @@
+.page-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+  }
+
+.code-block {
+  background-color: #f4f4f4;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  padding: 10px;
+  overflow-x: auto;
+}
+
+.endpoint {
+  color: #c7254e;
+  font-weight: bold;
+}

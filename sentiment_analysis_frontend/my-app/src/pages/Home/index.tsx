@@ -18,6 +18,12 @@ export const Home = () => {
         <Button variant="primary" href="/dashboard">
           Go to Dashboard
         </Button>
+        <Button variant="primary" href="/model-info">
+          Go to Model Info
+        </Button>
+        <Button variant="primary" href="/documentation">
+          Documentation
+        </Button>
       </Container>
     </div>
   );
