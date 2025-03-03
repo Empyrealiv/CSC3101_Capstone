@@ -53,6 +53,8 @@ export const Test = () => {
   // Split the text into tokens and apply styles
   const tokens = text.split(/(\s+)/); // Split by spaces, keeping spaces intact
 
+  console.log(text.split(/(\s+)/))
+
   return (
     <p>
       {tokens.map((token, index) => {

@@ -2,6 +2,7 @@
   display: flex;
   flex-direction: column;
   height: 100vh;
+  background-color: #1E1E1E;
 }
 
 .loading-overlay {
@@ -29,6 +30,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  color: white;
 }
 
 .display-container {
@@ -38,17 +40,18 @@
   align-items: center;
   justify-content: center;
   margin: 10px;
-  background-color: aqua;
+  background-color: #2A2A2A;
   border-radius: 5px;
-  outline: 1px solid black;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  outline: 1px solid #444A50;
+  box-shadow: 0 5px 5px rgba(0, 0, 0, 0.1);
+  color: white
 }
 
 .text-container {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  background-color: aqua;
+  background-color: #2A2A2A;
   height: 40vh;
   width: 20vw;
   border-radius: 5px;
@@ -61,14 +64,14 @@
 }
 
 .input-container .input-form {
-  background-color: aqua;
+  background-color: #2A2A2A;
   border-radius: 10px;
   padding: 10px 20px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  border: 1px solid black;;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  border: 1px solid #444A50;;
+  box-shadow: 0 5px 5px rgba(0, 0, 0, 0.1);
 }
 
 .input-container .input-form .form-control {
@@ -91,7 +94,7 @@
   align-items: start;
   justify-content: start;
   background-color: white;
-  border: 2px solid black;
+  border: 2px solid #444A50;
   border-radius: 5px;
   height: 15vh;
   max-height: 15vh;
@@ -104,7 +107,7 @@
 }
 
 .text-container::-webkit-scrollbar-thumb {
-  background-color: #007bff; /* Color of the scrollbar thumb */
+  background-color: #37474F; /* Color of the scrollbar thumb */
   border-radius: 10px; /* Rounded corners for the scrollbar */
 }
 
@@ -117,10 +120,27 @@
 }
 
 .evaluation-container::-webkit-scrollbar-thumb {
-  background-color: #007bff; /* Color of the scrollbar thumb */
+  background-color: #37474F; /* Color of the scrollbar thumb */
   border-radius: 10px; /* Rounded corners for the scrollbar */
 }
 
 .evaluation-container::-webkit-scrollbar-track {
   background-color: #f0f0f0; /* Background of the scrollbar track */
+}
+
+.btn-primary {
+  background-color: #007BFF !important;
+  border-color: #007BFF !important;
+  border-radius: 25px !important;
+  transition: background 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+}
+
+.btn-primary:hover {
+  background-color: #0056b3 !important;
+  border-color: #0056b3 !important;
+}
+
+.btn-primary:active {
+  background-color: #004494 !important;
+  border-color: #004494 !important;
 }

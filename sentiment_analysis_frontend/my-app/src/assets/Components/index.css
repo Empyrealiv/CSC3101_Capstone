@@ -27,7 +27,7 @@
 }
 
 .custom-table-container::-webkit-scrollbar-thumb {
-  background-color: #007bff; /* Color of the scrollbar thumb */
+  background-color: #37474F; /* Color of the scrollbar thumb */
   border-radius: 10px; /* Rounded corners for the scrollbar */
 }
 
