@@ -5,7 +5,7 @@ import Papa from "papaparse";
 import sentimentApi from "../api/index.ts";
 import { useSelector, useDispatch } from "react-redux";
 import { selectuploadCSVState } from "../selectors/index.ts";
-import { uploadCSVRequest, uploadCSVSuccess, uploadCSVFailure } from "../actions/index.ts";
+import { uploadCSVRequest, uploadCSVSuccess, uploadCSVFailure, addToast } from "../actions/index.ts";
 import { PREDICTED_STATES } from "../pages/Dashboard/constants.ts";
 
 interface FileUploadButtonProps {
@@ -39,7 +39,7 @@ const UploadCSVButton: React.FC<FileUploadButtonProps> = ({
 
   const handleUpload = async (file: File) => {
     if (!file) {
-      alert("No file selected.");
+      dispatch(addToast("No file selected."));
       return;
     }
 
@@ -48,12 +48,13 @@ const UploadCSVButton: React.FC<FileUploadButtonProps> = ({
     formData.append("model_name", selectedModel)
 
     try {
-      setPredictedState(PREDICTED_STATES.multi)
       dispatch(uploadCSVRequest())
       const response = await sentimentApi.uploadCSV(formData)
       dispatch(uploadCSVSuccess(response.data))
+      setPredictedState(PREDICTED_STATES.multi)
     } catch (error: any) {
       dispatch(uploadCSVFailure(error.message))
+      dispatch(addToast(error.message))
     }
   };
 

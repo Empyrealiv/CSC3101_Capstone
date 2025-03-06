@@ -1,7 +1,7 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { addToast, removeToast } from "../actions/index.ts";
-import { Toast, Button } from "react-bootstrap";
+import { removeToast } from "../actions/index.ts";
+import { Toast } from "react-bootstrap";
 import { selectToastManagerState } from "../selectors/index.ts";
 
 export const ToastManager = () => {

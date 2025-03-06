@@ -4,6 +4,7 @@ import { useSelector, useDispatch } from "react-redux"
 import { selectuploadCSVState } from "../selectors/index.ts"
 import { IUploadCSVResponseItem } from '../types/index'
 import "../assets/Components/index.css";
+import { addToast } from '../actions/index.ts';
 
 interface CustomDataTableProps {
   setTextInfo: React.Dispatch<React.SetStateAction<string>>;
@@ -14,6 +15,7 @@ const CustomDataTable: React.FC<CustomDataTableProps> = ({
 }) => {
   const [data, setData] = useState<IUploadCSVResponseItem[]>([])
   const uploadCSVData = useSelector(selectuploadCSVState)
+  const dispatch = useDispatch()
 
   useEffect(() => {
     if (uploadCSVData.isLoading) {
