@@ -6,7 +6,7 @@ import os
 import numpy as np
 import pandas as pd
 
-TOKEN_LIMIT = 400
+TOKEN_LIMIT = 512
 
 MODEL_1_PATH = os.path.join(os.path.dirname(__file__), '..', '..', 'sentiment_analysis_backend', 'Models', 'Model_1')
 MODEL_2_PATH = os.path.join(os.path.dirname(__file__), '..', '..', 'sentiment_analysis_backend', 'Models', 'Model_2')
@@ -45,6 +45,47 @@ def predict(text: str, model_name: str):
     confidence = probabilities[0, prediction].item()
     
     return prediction, confidence
+
+def predict_with_gradient(text: str, model_name: str):
+    if model_name not in models:
+        raise ValueError(f"Invalid model name: {model_name}. Available models: {list(models.keys())}")
+
+    model_info = models[model_name]
+    tokenizer = model_info['tokenizer']
+    model = model_info['model']
+
+    inputs = tokenizer(text, return_tensors="pt", truncation=True, padding=True, max_length=512)
+    input_ids = inputs["input_ids"]
+    attention_mask = inputs["attention_mask"]
+
+    embeddings = model.get_input_embeddings()(input_ids).detach()
+    embeddings.requires_grad = True
+
+    outputs = model(inputs_embeds=embeddings, attention_mask=attention_mask)
+    logits = outputs.logits
+    predicted_class = torch.argmax(logits, dim=1).item()
+    confidence = torch.softmax(logits, dim=1)[0, predicted_class].item()
+
+    logits[0, predicted_class].backward()
+    gradients = embeddings.grad[0]  # Gradients with respect to embeddings
+
+    # Compute token importance scores as the norm of gradient * embedding
+    importance_scores = torch.norm(gradients * embeddings[0], dim=-1)
+
+    # Normalize scores for interpretability
+    importance_scores = importance_scores / importance_scores.sum()
+
+    # Map tokens to words
+    tokens = tokenizer.convert_ids_to_tokens(input_ids[0])
+
+    # Filter tokens by threshold
+    word_importance = [
+        {"word": token, "contribution": score.item()}
+        for token, score in zip(tokens, importance_scores)
+        if token not in ["[CLS]", "[SEP]"]
+    ]
+    
+    return predicted_class, confidence, word_importance
 
 def compute_metrics(labels, preds):
     preds = np.array(preds).argmax(-1)

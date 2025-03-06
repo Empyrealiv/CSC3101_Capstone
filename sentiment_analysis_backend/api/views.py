@@ -2,7 +2,7 @@ from rest_framework.decorators import api_view, parser_classes
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.response import Response
 from .serializers import TextSerializer
-from .utils import predict
+from .utils import predict, predict_with_gradient
 from .utils import models
 import pandas as pd
 
@@ -18,6 +18,22 @@ def predict_sentiment(request):
                 return Response({"sentiment": "NEGATIVE", "confidence": confidence})
             elif sentiment == 1:
                 return Response({"sentiment": "POSITIVE", "confidence": confidence})
+        return Response(serializer.errors, status=400)
+    except Exception as e:
+        return Response({"error": str(e)}, status=500)
+    
+@api_view(['POST'])
+def predict_importance(request):
+    try:
+        serializer = TextSerializer(data=request.data)
+        if serializer.is_valid():
+            text = serializer.validated_data['text']
+            model_name = serializer.validated_data['model_name']
+            sentiment, confidence, word_importance = predict_with_gradient(text, model_name)
+            if sentiment == 0:
+                return Response({"sentiment": "NEGATIVE", "confidence": confidence, "word_importance": word_importance})
+            elif sentiment == 1:
+                return Response({"sentiment": "POSITIVE", "confidence": confidence, "word_importance": word_importance})
         return Response(serializer.errors, status=400)
     except Exception as e:
         return Response({"error": str(e)}, status=500)
