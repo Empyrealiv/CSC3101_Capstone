@@ -15,6 +15,7 @@ TOKEN_LIMIT = 512
 MLM_MODEL_PATH = os.path.join(os.path.dirname(__file__), '..', '..', 'sentiment_analysis_backend', 'Models', 'mlm_pretraining_6')
 BASE_MODEL_PATH = os.path.join(os.path.dirname(__file__), '..', '..', 'sentiment_analysis_backend', 'Models', 'base_model')
 WHLA_FINAL_MODEL_PATH = os.path.join(os.path.dirname(__file__), '..', '..', 'sentiment_analysis_backend', 'Models', 'whla_final_model')
+EMOTIONS_PROPOSED_MODEL_PATH = os.path.join(os.path.dirname(__file__), '..', '..', 'sentiment_analysis_backend', 'Models', 'emotions_proposed_model')
 
 def get_custom_model_files(model_dir):
 
@@ -29,11 +30,11 @@ def get_custom_model_files(model_dir):
 
     return meta_data
 
-def load_custom_model(model_path, num_labels=2):
+def load_custom_model(model_path):
     meta_data = get_custom_model_files(model_path)
     with open(meta_data['json_filename'], "r") as f:
         config = json.load(f)
-    model = WHLA_BERT(pretrained_model=MLM_MODEL_PATH, num_labels=num_labels)
+    model = WHLA_BERT(pretrained_model=MLM_MODEL_PATH)
     model.gates = nn.Parameter(torch.tensor(config["gates"]))
     model.fc = nn.Linear(config["hidden_size"], config["num_labels"])
     model.load_state_dict(torch.load(
@@ -41,7 +42,6 @@ def load_custom_model(model_path, num_labels=2):
         map_location=torch.device('cpu'),
         weights_only=True
     ))
-
     return model
 
 models = {
@@ -50,7 +50,11 @@ models = {
         'tokenizer': BertTokenizer.from_pretrained(BASE_MODEL_PATH),
     },
     'WHLA Final Model': {
-        'model': load_custom_model(WHLA_FINAL_MODEL_PATH, num_labels=2),
+        'model': load_custom_model(WHLA_FINAL_MODEL_PATH),
+        'tokenizer': BertTokenizer.from_pretrained(MLM_MODEL_PATH),
+    },
+    'Emotions Proposed Model': {
+        'model': load_custom_model(EMOTIONS_PROPOSED_MODEL_PATH),
         'tokenizer': BertTokenizer.from_pretrained(MLM_MODEL_PATH),
     }
 }
