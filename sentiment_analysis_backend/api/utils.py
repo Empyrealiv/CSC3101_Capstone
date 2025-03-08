@@ -1,24 +1,57 @@
 from sklearn.metrics import precision_recall_fscore_support, accuracy_score
-from transformers import BertTokenizer, BertForSequenceClassification
+from transformers import BertTokenizer, BertForSequenceClassification, BertModel
 from torch.nn.functional import softmax
+from transformers import Trainer, TrainingArguments, DataCollatorWithPadding
+from .classes import WHLA_BERT
 import torch
+import torch.nn as nn
 import os
 import numpy as np
 import pandas as pd
+import json
 
 TOKEN_LIMIT = 512
 
-MODEL_1_PATH = os.path.join(os.path.dirname(__file__), '..', '..', 'sentiment_analysis_backend', 'Models', 'Model_1')
-MODEL_2_PATH = os.path.join(os.path.dirname(__file__), '..', '..', 'sentiment_analysis_backend', 'Models', 'Model_2')
+MLM_MODEL_PATH = os.path.join(os.path.dirname(__file__), '..', '..', 'sentiment_analysis_backend', 'Models', 'mlm_pretraining_6')
+BASE_MODEL_PATH = os.path.join(os.path.dirname(__file__), '..', '..', 'sentiment_analysis_backend', 'Models', 'base_model')
+WHLA_FINAL_MODEL_PATH = os.path.join(os.path.dirname(__file__), '..', '..', 'sentiment_analysis_backend', 'Models', 'whla_final_model')
+
+def get_custom_model_files(model_dir):
+
+    dir_name = os.path.basename(os.path.normpath(model_dir))
+    model_filename = f"{dir_name}.pth"
+    json_filename = f"{dir_name}_config.json"
+
+    meta_data = {
+        "model_filename": os.path.join(os.path.dirname(__file__), '..', '..', 'sentiment_analysis_backend', 'Models', dir_name, model_filename),
+        "json_filename": os.path.join(os.path.dirname(__file__), '..', '..', 'sentiment_analysis_backend', 'Models', dir_name, json_filename)
+    }
+
+    return meta_data
+
+def load_custom_model(model_path, num_labels=2):
+    meta_data = get_custom_model_files(model_path)
+    with open(meta_data['json_filename'], "r") as f:
+        config = json.load(f)
+    model = WHLA_BERT(pretrained_model=MLM_MODEL_PATH, num_labels=num_labels)
+    model.gates = nn.Parameter(torch.tensor(config["gates"]))
+    model.fc = nn.Linear(config["hidden_size"], config["num_labels"])
+    model.load_state_dict(torch.load(
+        meta_data['model_filename'], 
+        map_location=torch.device('cpu'),
+        weights_only=True
+    ))
+
+    return model
 
 models = {
     'Base Model': {
-        'model': BertForSequenceClassification.from_pretrained(MODEL_1_PATH),
-        'tokenizer': BertTokenizer.from_pretrained(MODEL_1_PATH),
+        'model': BertForSequenceClassification.from_pretrained(BASE_MODEL_PATH),
+        'tokenizer': BertTokenizer.from_pretrained(BASE_MODEL_PATH),
     },
-    'HLA Model': {
-        'model': BertForSequenceClassification.from_pretrained(MODEL_2_PATH),
-        'tokenizer': BertTokenizer.from_pretrained(MODEL_2_PATH),
+    'WHLA Final Model': {
+        'model': load_custom_model(WHLA_FINAL_MODEL_PATH, num_labels=2),
+        'tokenizer': BertTokenizer.from_pretrained(MLM_MODEL_PATH),
     }
 }
 
@@ -33,7 +66,10 @@ def predict(text: str, model_name: str):
     tokenizer = model_info['tokenizer']
     model = model_info['model']
 
-    inputs = tokenizer(text, return_tensors="pt", truncation=True, padding=True, max_length=TOKEN_LIMIT)
+    inputs = tokenizer(text, return_tensors="pt", truncation=True, max_length=TOKEN_LIMIT)
+
+    if isinstance(model, WHLA_BERT) and 'token_type_ids' in inputs:
+        inputs.pop('token_type_ids')
 
     with torch.no_grad():
         outputs = model(**inputs)
@@ -54,7 +90,7 @@ def predict_with_gradient(text: str, model_name: str):
     tokenizer = model_info['tokenizer']
     model = model_info['model']
 
-    inputs = tokenizer(text, return_tensors="pt", truncation=True, padding=True, max_length=512)
+    inputs = tokenizer(text, return_tensors="pt", truncation=True, max_length=512)
     input_ids = inputs["input_ids"]
     attention_mask = inputs["attention_mask"]
 
@@ -87,10 +123,23 @@ def predict_with_gradient(text: str, model_name: str):
     
     return predicted_class, confidence, word_importance
 
-def compute_metrics(labels, preds):
+def tokenize_datasets(dataset, tokenizer):
+
+    def tokenize_function(data):
+        return tokenizer(
+            data["text"], 
+            truncation=True,
+            max_length=TOKEN_LIMIT
+        )
+    
+    tokenized_dataset = dataset.map(tokenize_function, batched=True)
+    
+    return tokenized_dataset
+
+def macro_compute_metrics(labels, preds):
     preds = np.array(preds).argmax(-1)
     labels = np.array(labels)
-    precision, recall, f1, _ = precision_recall_fscore_support(labels, preds, average='weighted')
+    precision, recall, f1, _ = precision_recall_fscore_support(labels, preds, average='macro')
     acc = accuracy_score(labels, preds)
     return {
         'accuracy': acc,
@@ -99,17 +148,41 @@ def compute_metrics(labels, preds):
         'recall': recall
     }
 
-def predict_batch(text: str, model_name: str):
-    if model_name not in models:
-        raise ValueError(f"Invalid model name: {model_name}. Available models: {list(models.keys())}")
+def binary_compute_metrics(pred):
+    labels = pred.label_ids
+    preds = pred.predictions.argmax(-1)
+    precision, recall, f1, _ = precision_recall_fscore_support(labels, preds, average='binary')
+    acc = accuracy_score(labels, preds)
+    return {
+        'accuracy': acc,
+        'f1': f1,
+        'precision': precision,
+        'recall': recall
+    }
 
+def evaluate(model_name: str, dataset):
     model_info = models[model_name]
     tokenizer = model_info['tokenizer']
     model = model_info['model']
 
-    inputs = tokenizer(text, return_tensors="pt", truncation=True, padding=True, max_length=TOKEN_LIMIT)
+    tokenized_dataset = tokenize_datasets(dataset, tokenizer)
+    data_collator = DataCollatorWithPadding(tokenizer=tokenizer)
 
-    with torch.no_grad():
-        logits = model(**inputs).logits
-    predictions = torch.softmax(logits, dim=-1).cpu().numpy()
-    return predictions
+    training_args = TrainingArguments(
+        output_dir="./results",
+        per_device_eval_batch_size=16,
+        report_to="none"
+    )
+
+    trainer = Trainer(
+        model=model,
+        args=training_args,
+        data_collator=data_collator,
+        compute_metrics=binary_compute_metrics,
+    )
+
+    prediction_output = trainer.predict(tokenized_dataset)
+    predicted_classes = np.argmax(prediction_output.predictions, axis=1)
+
+    print(prediction_output)
+    print(f"Predicted classes: {predicted_classes}")

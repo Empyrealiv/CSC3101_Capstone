@@ -2,9 +2,10 @@ from rest_framework.decorators import api_view, parser_classes
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.response import Response
 from .serializers import TextSerializer
-from .utils import predict, predict_with_gradient
+from .utils import predict, predict_with_gradient, evaluate
 from .utils import models
 import pandas as pd
+from datasets import Dataset
 
 @api_view(['POST'])
 def predict_sentiment(request):
@@ -73,3 +74,24 @@ def handleMultiPredict(texts: pd.Series, model_name: str):
         results.append({"text": text, "sentiment": sentiment_label, "confidence": confidence})
 
     return Response(results, status=200)
+
+@api_view(["POST"])
+def evaluateModel(request):
+    binary_dataset = Dataset.from_dict({
+    'text': [
+        "I absolutely loved this movie, it was fantastic!",
+        "The service at this restaurant was excellent.",
+        "This product exceeded all my expectations.",
+        "What a wonderful experience from start to finish.",
+        "I would highly recommend this to anyone.",
+        "This was the worst experience of my life.",
+        "I am so disappointed with this purchase.",
+        "The customer service was terrible and unhelpful.",
+        "I regret wasting my money on this.",
+        "This product broke after just one week."
+    ],
+    'label': [1, 1, 1, 1, 1, 0, 0, 0, 0, 0]  # 1 = positive, 0 = negative
+    })
+
+    evaluate('Base Model', binary_dataset)
+    return Response(status=200)
