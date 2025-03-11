@@ -11,6 +11,15 @@ const predictSentiment = async (text: string, model: string) => {
   return await axios.post(API_URL + endpoint, payload);
 };
 
+const predictWordImportance = async (text: string, model: string) => {
+  const endpoint = "predictImportance/";
+  const payload = {
+    text: text,
+    model_name: model,
+  };
+  return await axios.post(API_URL + endpoint, payload);
+};
+
 const getModels = async () => {
   const endpoint = "getModels/";
   return await axios.get(API_URL + endpoint);
@@ -25,6 +34,7 @@ const uploadCSV = async (formData: FormData) => {
 
 const sentimentApi = {
   predictSentiment,
+  predictWordImportance,
   getModels,
   uploadCSV,
 };

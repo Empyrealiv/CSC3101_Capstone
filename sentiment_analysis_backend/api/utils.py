@@ -174,7 +174,7 @@ def evaluate(model_name: str, dataset):
 
     training_args = TrainingArguments(
         output_dir="./results",
-        per_device_eval_batch_size=16,
+        per_device_eval_batch_size=1,
         report_to="none"
     )
 

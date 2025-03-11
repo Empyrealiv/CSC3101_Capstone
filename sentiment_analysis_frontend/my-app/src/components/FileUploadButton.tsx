@@ -6,7 +6,7 @@ import sentimentApi from "../api/index.ts";
 import { useSelector, useDispatch } from "react-redux";
 import { selectuploadCSVState } from "../selectors/index.ts";
 import { uploadCSVRequest, uploadCSVSuccess, uploadCSVFailure, addToast } from "../actions/index.ts";
-import { PREDICTED_STATES } from "../pages/Dashboard/constants.ts";
+import { PREDICTED_STATES } from "../pages/constants.ts";
 
 interface FileUploadButtonProps {
   selectedModel: string;

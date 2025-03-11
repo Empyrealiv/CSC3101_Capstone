@@ -24,6 +24,13 @@ export const TEST_DATA = [
 export interface IPredictResponse {
     sentiment: string
     confidence: string
+    word_importance: IWordImportance[]
+}
+
+export interface IPredictResults {
+    sentiment: string
+    confidence: string
+    words: ITokenInfo[]
 }
 
 export interface IUploadCSVResponseItem {
@@ -35,4 +42,17 @@ export interface IUploadCSVResponseItem {
 export interface IToastState {
     id: string
     message: string
+}
+
+export interface ITokenInfo {
+    text: string;
+    isSpace: boolean;
+    contribution?: number;
+    isHighlighted: boolean;
+    originalIndex?: number;
+}
+
+export interface IWordImportance {
+    word: string;
+    contribution: number;
 }
