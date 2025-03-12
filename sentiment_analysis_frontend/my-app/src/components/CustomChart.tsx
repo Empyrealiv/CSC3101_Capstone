@@ -1,37 +1,33 @@
 import React, { useEffect, useState } from "react";
 import { PieChart, Pie, Cell, Tooltip, Legend } from "recharts";
-import { useSelector, useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { selectuploadCSVState } from "../selectors/index.ts";
-import { IUploadCSVResponseItem } from "../types/index";
+import { createChartData } from "../pages/functions.ts";
+import { addToast } from "../actions/index.ts";
 import "../assets/Components/index.css";
 
-const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
+const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#8884D8", "#FF6B6B"];
 
 const Customchart = () => {
-  const [data, setData] = useState<IUploadCSVResponseItem[]>([]);
+  const [pieData, setPieData] = useState<{ name: string; value: number }[]>([]);
   const uploadCSVData = useSelector(selectuploadCSVState);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (uploadCSVData.isLoading) {
       return;
     }
-    setData(uploadCSVData.data);
+    try {
+      setPieData(createChartData(uploadCSVData.data));
+    } catch (error) {
+      dispatch(addToast(error.message));
+    }
+    setPieData(createChartData(uploadCSVData.data));
   }, [uploadCSVData]);
-
-  const pieData = [
-    {
-      name: "Positive",
-      value: data.filter((item) => item.sentiment === "Positive").length,
-    },
-    {
-      name: "Negative",
-      value: data.filter((item) => item.sentiment === "Negative").length,
-    },
-  ];
 
   return (
     <div className="pie-chart-container">
-        {data.length > 0 ? (
+        {pieData.length > 0 ? (
         <PieChart width={window.innerWidth * 0.2} height={window.innerWidth * 0.18} className="pie-chart">
           <Pie
             data={pieData}

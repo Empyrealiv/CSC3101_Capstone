@@ -1,5 +1,32 @@
+:root {
+  /* Main colors */
+  --background-dark: #1E1E1E;
+  --background-medium: #2A2A2A;
+  --background-light: #3D3D3D;
+  --border-color: #444A50;
+  --text-color: white;
+  
+  /* Button colors */
+  --primary-button: #007BFF;
+  --primary-button-hover: #0056b3;
+  --primary-button-active: #004494;
+  
+  /* Overlay colors */
+  --overlay-background: rgba(0, 0, 0, 0.5);
+  
+  /* Scrollbar colors */
+  --scrollbar-thumb: #37474F;
+  --scrollbar-track: #f0f0f0;
+  
+  /* Shadow */
+  --box-shadow: 0 5px 5px rgba(0, 0, 0, 0.1);
+
+  /* Outline */
+  --outline: 1px solid #444A50;
+}
+
 .text-column {
-  max-width: 20vw;
+  max-width: 20rem;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -9,9 +36,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: auto;
   background-color: white;
-  border: 2px solid black;
   border-radius: 5px;
 }
 
@@ -19,7 +44,11 @@
   display: flex;
   justify-content: center;
   overflow-y: auto;
-  max-height: 35vh;
+  max-height: 25rem;
+}
+
+.custom-table tbody tr{
+  background-color: var(--background-medium);
 }
 
 .custom-table-container::-webkit-scrollbar {

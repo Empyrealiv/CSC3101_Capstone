@@ -1,10 +1,7 @@
-import React, { useRef, useEffect, useState } from "react";
-import ReactFileReader from "react-file-reader";
-import { Button, Form } from "react-bootstrap";
-import Papa from "papaparse";
+import React, { useRef } from "react";
+import { Button } from "react-bootstrap";
 import sentimentApi from "../api/index.ts";
-import { useSelector, useDispatch } from "react-redux";
-import { selectuploadCSVState } from "../selectors/index.ts";
+import { useDispatch } from "react-redux";
 import { uploadCSVRequest, uploadCSVSuccess, uploadCSVFailure, addToast } from "../actions/index.ts";
 import { PREDICTED_STATES } from "../pages/constants.ts";
 

@@ -1,8 +1,5 @@
-import React, { use, useEffect, useState } from 'react';
+import React, {  } from 'react';
 import Table from 'react-bootstrap/Table';
-import { useSelector, useDispatch } from "react-redux"
-import { selectuploadCSVState } from "../selectors/index.ts"
-import { IUploadCSVResponseItem } from '../types/index'
 import "../assets/Components/index.css";
 
 const CustomEvalDataTable = () => {

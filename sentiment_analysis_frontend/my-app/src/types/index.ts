@@ -39,6 +39,11 @@ export interface IUploadCSVResponseItem {
     confidence: string
 }
 
+export interface IUploadCSVResponse {
+    results: IUploadCSVResponseItem[]
+    mode: string
+}
+
 export interface IToastState {
     id: string
     message: string

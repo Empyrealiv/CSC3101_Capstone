@@ -1,13 +1,13 @@
 from sklearn.metrics import precision_recall_fscore_support, accuracy_score
-from transformers import BertTokenizer, BertForSequenceClassification, BertModel
+from transformers import BertTokenizer, BertForSequenceClassification
 from torch.nn.functional import softmax
 from transformers import Trainer, TrainingArguments, DataCollatorWithPadding
+from .constants import BINARY_EMOTIONS_MAP, TENARY_EMOTIONS_MAP, EMOTIONS_6_MAP, GOEMOTIONS_MAP
 from .classes import WHLA_BERT
 import torch
 import torch.nn as nn
 import os
 import numpy as np
-import pandas as pd
 import json
 
 TOKEN_LIMIT = 512
@@ -48,14 +48,20 @@ models = {
     'Base Model': {
         'model': BertForSequenceClassification.from_pretrained(BASE_MODEL_PATH),
         'tokenizer': BertTokenizer.from_pretrained(BASE_MODEL_PATH),
+        'label_map': BINARY_EMOTIONS_MAP,
+        'mode': 'binary'
     },
     'WHLA Final Model': {
         'model': load_custom_model(WHLA_FINAL_MODEL_PATH),
         'tokenizer': BertTokenizer.from_pretrained(MLM_MODEL_PATH),
+        'label_map': BINARY_EMOTIONS_MAP,
+        'mode': 'binary'
     },
     'Emotions Proposed Model': {
         'model': load_custom_model(EMOTIONS_PROPOSED_MODEL_PATH),
         'tokenizer': BertTokenizer.from_pretrained(MLM_MODEL_PATH),
+        'label_map': EMOTIONS_6_MAP,
+        'mode': 'emotions-6-class'
     }
 }
 
@@ -69,6 +75,7 @@ def predict(text: str, model_name: str):
     model_info = models[model_name]
     tokenizer = model_info['tokenizer']
     model = model_info['model']
+    label_map = model_info['label_map']
 
     inputs = tokenizer(text, return_tensors="pt", truncation=True, max_length=TOKEN_LIMIT)
 
@@ -83,8 +90,16 @@ def predict(text: str, model_name: str):
     
     prediction = torch.argmax(probabilities, dim=-1).item()
     confidence = probabilities[0, prediction].item()
+
+    prediction = label_map[prediction]
     
     return prediction, confidence
+
+def get_model_mode(model_name: str):
+    if model_name not in models:
+        raise ValueError(f"Invalid model name: {model_name}. Available models: {list(models.keys())}")
+
+    return models[model_name]['mode']
 
 def predict_with_gradient(text: str, model_name: str):
     if model_name not in models:
@@ -93,6 +108,7 @@ def predict_with_gradient(text: str, model_name: str):
     model_info = models[model_name]
     tokenizer = model_info['tokenizer']
     model = model_info['model']
+    label_map = model_info['label_map']
 
     inputs = tokenizer(text, return_tensors="pt", truncation=True, max_length=512)
     input_ids = inputs["input_ids"]
@@ -124,6 +140,8 @@ def predict_with_gradient(text: str, model_name: str):
         for token, score in zip(tokens, importance_scores)
         if token not in ["[CLS]", "[SEP]"]
     ]
+
+    predicted_class = label_map[predicted_class] # Map to string label
     
     return predicted_class, confidence, word_importance
 

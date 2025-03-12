@@ -1,14 +1,11 @@
-import React, { use } from "react";
+import React from "react";
 import { useState, useEffect } from "react";
 import Form from "react-bootstrap/Form";
-import FormControl from "react-bootstrap/FormControl";
 import {
   Container,
   Row,
   Col,
   Button,
-  Navbar,
-  Nav,
   Dropdown,
   Spinner,
 } from "react-bootstrap";
@@ -38,22 +35,6 @@ export const Dashboard = () => {
   const uploadCSVData = useSelector(selectuploadCSVState);
   const dispatch = useDispatch();
 
-  const handlePredict = async (text: string) => {
-    try {
-      setLoading(true);
-      const response = await sentimentApi.predictWordImportance(
-        text,
-        selectedModel
-      );
-      handlePredictResponse(response.data);
-      setPredictedState(PREDICTED_STATES.single);
-    } catch (error: any) {
-      dispatch(addToast(error.message));
-    } finally {
-      setLoading(false);
-    }
-  };
-
   useEffect(() => {
     const fetchModels = async () => {
       try {
@@ -70,11 +51,35 @@ export const Dashboard = () => {
     fetchModels();
   }, []);
 
+  const validations = () => {
+    if (userInput === "") {
+      dispatch(addToast("Please enter some text"));
+      return false;
+    }
+    return true;
+  };
+
+  const handlePredict = async (text: string) => {
+    if (!validations()) {
+      return;
+    }
+    try {
+      setLoading(true);
+      const response = await sentimentApi.predictWordImportance(
+        text,
+        selectedModel
+      );
+      handlePredictResponse(response.data);
+      setPredictedState(PREDICTED_STATES.single);
+    } catch (error: any) {
+      dispatch(addToast(error.message));
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handlePredictResponse = (data: IPredictResponse) => {
-    const processedTokens = processText(
-      userInput,
-      data.word_importance
-    );
+    const processedTokens = processText(userInput, data.word_importance);
     const predictResults: IPredictResults = {
       sentiment: data.sentiment,
       confidence: data.confidence,
@@ -207,17 +212,16 @@ export const Dashboard = () => {
               <Col xs={4} className="custom-chart-container">
                 <Customchart />
               </Col>
-              <Col xs={8} className="custom-table-container">
-                <CustomDataTable setTextInfo={setTextInfo} />
-              </Col>
-            </Row>
-            <br />
-            <Row className="second-row">
-              <Col xs={4} className="evaluation-container">
-                <p>{textInfo}</p>
-              </Col>
-              <Col xs={8} className="custom-table-container">
-                <CustomEvalDataTable />
+              <Col>
+                <Container>
+                  <Row className="custom-table-container">
+                    <CustomDataTable setTextInfo={setTextInfo} />
+                  </Row>
+                  <br />
+                  <Row>
+                    <CustomEvalDataTable />
+                  </Row>
+                </Container>
               </Col>
             </Row>
           </Container>

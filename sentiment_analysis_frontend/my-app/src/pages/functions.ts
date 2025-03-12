@@ -1,5 +1,15 @@
-import { ITokenInfo, IWordImportance } from "../types";
-import { IMPORTANT_WORD_THRESHOLD } from "./constants.ts";
+import {
+  ITokenInfo,
+  IUploadCSVResponse,
+  IWordImportance,
+} from "../types";
+import {
+  IMPORTANT_WORD_THRESHOLD,
+  BINARY_EMOTIONS_MAP,
+  TERNARY_EMOTIONS_MAP,
+  EMOTIONS_6_MAP,
+  GOEMOTIONS_MAP,
+} from "./constants.ts";
 
 export const processText = (text: string, tokens: IWordImportance[]) => {
   const rawTokens = text
@@ -13,7 +23,6 @@ export const processText = (text: string, tokens: IWordImportance[]) => {
   for (let i = 0; i < rawTokens.length; i++) {
     const rawToken = rawTokens[i];
     const isSpace = /^\s+$/.test(rawToken);
-    debugger;
 
     if (isSpace) {
       tokenInfo.push({
@@ -140,4 +149,39 @@ export const processText = (text: string, tokens: IWordImportance[]) => {
 
 export const formatContribution = (value: number): string => {
   return (value * 100).toFixed(2) + "%";
+};
+
+export const createChartData = (data: IUploadCSVResponse) => {
+  let emotionMap;
+  debugger
+
+  switch (data.mode) {
+    case "binary":
+      emotionMap = BINARY_EMOTIONS_MAP;
+      break;
+    case "ternary":
+      emotionMap = TERNARY_EMOTIONS_MAP;
+      break;
+    case "emotions-6-class":
+      emotionMap = EMOTIONS_6_MAP;
+      break;
+    case "goemotions":
+      emotionMap = GOEMOTIONS_MAP;
+      break;
+    default:
+      emotionMap = null;
+  }
+  
+  if (!emotionMap) {
+    throw new Error("Error processing data");
+  }
+
+  const chartData = (Object.values(emotionMap) as string[]).map((sentimentString: string) => {
+    return {
+      name: sentimentString,
+      value: data.results.filter((item) => item.sentiment === sentimentString).length,
+    };
+  });
+
+  return chartData;
 };
