@@ -14,6 +14,7 @@ import Customchart from "../../components/CustomChart.tsx";
 import CustomEvalDataTable from "../../components/CustomEvalDataTable.tsx";
 import FileUploadButton from "../../components/FileUploadButton.tsx";
 import sentimentApi from "../../api/index.ts";
+import UploadCSVModal from "../../components/Modal.tsx";
 import "../../assets/Dashboard/index.css";
 import { PREDICTED_STATES } from "../constants.ts";
 import { useDispatch, useSelector } from "react-redux";
@@ -34,6 +35,11 @@ export const Dashboard = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const uploadCSVData = useSelector(selectuploadCSVState);
   const dispatch = useDispatch();
+
+  // Modal
+  const [showModal, setShowModal] = useState(false);
+  const handleOpenModal = () => setShowModal(true);
+  const handleCloseModal = () => setShowModal(false);
 
   useEffect(() => {
     const fetchModels = async () => {
@@ -211,11 +217,17 @@ export const Dashboard = () => {
             <Row>
               <Col xs={4} className="custom-chart-container">
                 <Customchart />
+                <Form.Check 
+                  type="switch"
+                  id="evaluation-mode-switch"
+                  label=""
+                  className="custom-switch"
+                />
               </Col>
               <Col>
                 <Container>
                   <Row className="custom-table-container">
-                    <CustomDataTable setTextInfo={setTextInfo} />
+                    <CustomDataTable />
                   </Row>
                   <br />
                   <Row>
@@ -243,16 +255,24 @@ export const Dashboard = () => {
           }}
         />
         <div className="input-buttons">
-          <FileUploadButton
-            selectedModel={selectedModel}
-            setPredictedState={setPredictedState}
-            setLoading={setLoading}
-          />
+          <Button variant="primary" onClick={handleOpenModal}>
+            Upload
+          </Button>
           <Button variant="primary" onClick={() => handlePredict(userInput)}>
             Predict
           </Button>
         </div>
       </Container>
+
+      {/* Modal */}
+      <UploadCSVModal
+        show={showModal}
+        onHide={handleCloseModal}
+        title="Upload CSV"
+        selectedModel={selectedModel}
+        setPredictedState={setPredictedState}
+        setLoading={setLoading}
+      ></UploadCSVModal>
     </div>
   );
 };

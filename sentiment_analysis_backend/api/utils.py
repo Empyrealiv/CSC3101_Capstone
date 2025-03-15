@@ -9,6 +9,7 @@ import torch.nn as nn
 import os
 import numpy as np
 import json
+from datasets import Value
 
 TOKEN_LIMIT = 512
 
@@ -90,8 +91,6 @@ def predict(text: str, model_name: str):
     
     prediction = torch.argmax(probabilities, dim=-1).item()
     confidence = probabilities[0, prediction].item()
-
-    prediction = label_map[prediction]
     
     return prediction, confidence
 
@@ -158,9 +157,9 @@ def tokenize_datasets(dataset, tokenizer):
     
     return tokenized_dataset
 
-def macro_compute_metrics(labels, preds):
-    preds = np.array(preds).argmax(-1)
-    labels = np.array(labels)
+def macro_compute_metrics(pred):
+    labels = pred.label_ids
+    preds = pred.predictions.argmax(-1)
     precision, recall, f1, _ = precision_recall_fscore_support(labels, preds, average='macro')
     acc = accuracy_score(labels, preds)
     return {
@@ -186,6 +185,10 @@ def evaluate(model_name: str, dataset):
     model_info = models[model_name]
     tokenizer = model_info['tokenizer']
     model = model_info['model']
+    mode = model_info['mode']
+
+    original_texts = list(dataset["text"])
+    dataset = dataset.cast_column("label", Value("int64"))
 
     tokenized_dataset = tokenize_datasets(dataset, tokenizer)
     data_collator = DataCollatorWithPadding(tokenizer=tokenizer)
@@ -196,15 +199,45 @@ def evaluate(model_name: str, dataset):
         report_to="none"
     )
 
+    compute_metrics_fn = binary_compute_metrics if mode == "binary" else macro_compute_metrics
+
     trainer = Trainer(
         model=model,
         args=training_args,
         data_collator=data_collator,
         compute_metrics=binary_compute_metrics,
     )
+    
+    try:
+        prediction_output = trainer.predict(tokenized_dataset)
+    except Exception as e:
+        raise ValueError(f"Error during evaluation: {str(e)}")
+    
+    raw_predictions = prediction_output.predictions
+    tensor_predictions = torch.tensor(raw_predictions)
+    # Apply softmax with dim parameter (not axis)
+    probabilities = softmax(tensor_predictions, dim=1)
+    probabilities_np = probabilities.numpy()
+    predicted_classes = probabilities_np.argmax(axis=1).tolist()
+    confidence_scores = [float(probabilities[i, pred]) for i, pred in enumerate(predicted_classes)]
 
-    prediction_output = trainer.predict(tokenized_dataset)
-    predicted_classes = np.argmax(prediction_output.predictions, axis=1)
+    labels = prediction_output.label_ids.tolist()
+    metrics = prediction_output.metrics
 
-    print(prediction_output)
-    print(f"Predicted classes: {predicted_classes}")
+    result = {
+        "texts": original_texts,
+        "labels": labels,
+        "predicted_classes": predicted_classes,
+        "confidence_scores": confidence_scores,
+        "metrics": {
+            "accuracy": metrics["test_accuracy"],
+            "f1": metrics["test_f1"],
+            "precision": metrics["test_precision"],
+            "recall": metrics["test_recall"],
+            "loss": metrics["test_loss"]
+        },
+        "mode": mode,
+        "evaluation_mode": True
+    }
+    
+    return result

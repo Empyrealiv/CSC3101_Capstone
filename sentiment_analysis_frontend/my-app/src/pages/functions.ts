@@ -1,8 +1,4 @@
-import {
-  ITokenInfo,
-  IUploadCSVResponse,
-  IWordImportance,
-} from "../types";
+import { ITokenInfo, IUploadCSVResponse, IWordImportance } from "../types";
 import {
   IMPORTANT_WORD_THRESHOLD,
   BINARY_EMOTIONS_MAP,
@@ -151,9 +147,49 @@ export const formatContribution = (value: number): string => {
   return (value * 100).toFixed(2) + "%";
 };
 
-export const createChartData = (data: IUploadCSVResponse) => {
+export const createChartData = (mode: string, labels: string[]) => {
   let emotionMap;
-  debugger
+
+  switch (mode) {
+    case "binary":
+      emotionMap = BINARY_EMOTIONS_MAP;
+      break;
+    case "ternary":
+      emotionMap = TERNARY_EMOTIONS_MAP;
+      break;
+    case "emotions-6-class":
+      emotionMap = EMOTIONS_6_MAP;
+      break;
+    case "goemotions":
+      emotionMap = GOEMOTIONS_MAP;
+      break;
+    default:
+      emotionMap = null;
+  }
+
+  if (!emotionMap) {
+    throw new Error("Error processing data");
+  }
+  
+  const predictionCounts = labels.reduce(
+    (counts, predictionCode) => {
+      counts[predictionCode] = (counts[predictionCode] || 0) + 1;
+      return counts;
+    },
+    {} as Record<string, number>
+  );
+
+  const chartData = Object.entries(emotionMap).map(([code, emotionName]) => {
+    return {
+      name: emotionName as string,
+      value: predictionCounts[code] || 0,
+    };
+  });
+  return chartData;
+};
+
+export const getEmotionMap = (data: IUploadCSVResponse) => {
+  let emotionMap;
 
   switch (data.mode) {
     case "binary":
@@ -171,17 +207,10 @@ export const createChartData = (data: IUploadCSVResponse) => {
     default:
       emotionMap = null;
   }
-  
+
   if (!emotionMap) {
     throw new Error("Error processing data");
   }
 
-  const chartData = (Object.values(emotionMap) as string[]).map((sentimentString: string) => {
-    return {
-      name: sentimentString,
-      value: data.results.filter((item) => item.sentiment === sentimentString).length,
-    };
-  });
-
-  return chartData;
+  return emotionMap;
 };

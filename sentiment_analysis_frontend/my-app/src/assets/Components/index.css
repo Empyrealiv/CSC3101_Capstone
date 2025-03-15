@@ -1,28 +1,44 @@
 :root {
   /* Main colors */
-  --background-dark: #1E1E1E;
-  --background-medium: #2A2A2A;
-  --background-light: #3D3D3D;
-  --border-color: #444A50;
+  --background-dark: #1e1e1e;
+  --background-medium: #2a2a2a;
+  --background-light: #3d3d3d;
+  --border-color: #444a50;
   --text-color: white;
-  
+
   /* Button colors */
-  --primary-button: #007BFF;
+  --primary-button: #007bff;
   --primary-button-hover: #0056b3;
   --primary-button-active: #004494;
-  
+
   /* Overlay colors */
   --overlay-background: rgba(0, 0, 0, 0.5);
-  
+
   /* Scrollbar colors */
-  --scrollbar-thumb: #37474F;
+  --scrollbar-thumb: #37474f;
   --scrollbar-track: #f0f0f0;
-  
+
   /* Shadow */
   --box-shadow: 0 5px 5px rgba(0, 0, 0, 0.1);
 
   /* Outline */
-  --outline: 1px solid #444A50;
+  --outline: 1px solid #444a50;
+}
+
+.toggle-switch-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1rem;
+}
+
+.toggle-switch-container .custom-switch .form-check-input {
+  width: 3rem;
+  height: 1.5rem;
+}
+
+.toggle-switch-container .form-label {
+  margin-bottom: 0 !important;
 }
 
 .text-column {
@@ -35,8 +51,8 @@
 .custom-chart-container {
   display: flex;
   align-items: center;
-  justify-content: center;
-  background-color: white;
+  justify-content: space-between;
+  flex-direction: column;
   border-radius: 5px;
 }
 
@@ -47,7 +63,19 @@
   max-height: 25rem;
 }
 
-.custom-table tbody tr{
+.pie-chart-container {
+  display: flex;
+  flex-grow: 1;
+  background-color: white;
+}
+
+.pie-chart {
+    display: flex;
+  flex-grow: 1;
+  background-color: white;
+}
+
+.custom-table tbody tr {
   background-color: var(--background-medium);
 }
 
@@ -56,7 +84,7 @@
 }
 
 .custom-table-container::-webkit-scrollbar-thumb {
-  background-color: #37474F; /* Color of the scrollbar thumb */
+  background-color: #37474f; /* Color of the scrollbar thumb */
   border-radius: 10px; /* Rounded corners for the scrollbar */
 }
 
