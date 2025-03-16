@@ -63,14 +63,22 @@
   max-height: 25rem;
 }
 
+.red-row {
+  --bs-table-bg: #ff5252 !important;
+}
+
 .pie-chart-container {
   display: flex;
   flex-grow: 1;
   background-color: white;
+  text-align: center;
+  color: black;
+  border-radius: 5px;
+  overflow-y: auto;
 }
 
 .pie-chart {
-    display: flex;
+  display: flex;
   flex-grow: 1;
   background-color: white;
 }

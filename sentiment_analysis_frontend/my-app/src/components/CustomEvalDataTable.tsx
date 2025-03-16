@@ -14,7 +14,7 @@ const CustomEvalDataTable = () => {
         </tr>
       </thead>
       <tbody>
-        <tr>
+        <tr className='green-row'>
           <td>99%</td>
           <td>99%</td>
           <td>99%</td>

@@ -43,6 +43,8 @@ const Customchart = () => {
   return (
     <div className="pie-chart-container">
       {pieData.length > 0 ? (
+        <div>
+        <p>Predicted PieChart</p>
         <PieChart
           width={window.innerWidth * 0.2}
           height={window.innerWidth * 0.18}
@@ -69,6 +71,7 @@ const Customchart = () => {
           <Tooltip />
           <Legend />
         </PieChart>
+        </div>
       ) : (
         <div>
           <p>No data available</p>

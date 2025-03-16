@@ -217,12 +217,16 @@ export const Dashboard = () => {
             <Row>
               <Col xs={4} className="custom-chart-container">
                 <Customchart />
-                <Form.Check 
-                  type="switch"
-                  id="evaluation-mode-switch"
-                  label=""
-                  className="custom-switch"
-                />
+                <div className="evaluation-switch-container">
+                  <Form.Label>Toggle PieChart View</Form.Label>
+                  <Form.Check
+                    type="switch"
+                    id="piechart-switch"
+                    label=""
+                    className="piechart-switch"
+                  />
+                </div>
+                <CustomEvalDataTable />
               </Col>
               <Col>
                 <Container>
@@ -231,7 +235,12 @@ export const Dashboard = () => {
                   </Row>
                   <br />
                   <Row>
-                    <CustomEvalDataTable />
+                    <textarea
+                      className="preview-text"
+                      placeholder="Select a text to preview..."
+                      value={'test'}
+                      disabled={true}
+                    />
                   </Row>
                 </Container>
               </Col>
