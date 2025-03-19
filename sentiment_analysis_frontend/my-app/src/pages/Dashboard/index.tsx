@@ -12,9 +12,8 @@ import {
 import CustomDataTable from "../../components/CustomDataTable.tsx";
 import Customchart from "../../components/CustomChart.tsx";
 import CustomEvalDataTable from "../../components/CustomEvalDataTable.tsx";
-import FileUploadButton from "../../components/FileUploadButton.tsx";
 import sentimentApi from "../../api/index.ts";
-import UploadCSVModal from "../../components/Modal.tsx";
+import UploadCSVModal from "../../components/UploadCSVModal.tsx";
 import "../../assets/Dashboard/index.css";
 import { PREDICTED_STATES } from "../constants.ts";
 import { useDispatch, useSelector } from "react-redux";
@@ -38,7 +37,6 @@ export const Dashboard = () => {
   const uploadCSVData = useSelector(selectuploadCSVState);
   const dispatch = useDispatch();
 
-  // Modal
   const [showModal, setShowModal] = useState(false);
   const handleOpenModal = () => setShowModal(true);
   const handleCloseModal = () => setShowModal(false);
