@@ -78,7 +78,7 @@
   align-items: center;
   justify-content: center;
   border-radius: 5px;
-  background-color: var(--background-medium);
+  background-color: var(--background-light);
   outline: var(--outline);
   box-shadow: var(--box-shadow);
   margin: 1rem 0;
@@ -96,6 +96,14 @@
   height: 1.5rem;
 }
 
+.custom-eval-table-container {
+  width: 100%;
+  border-radius: 5px;
+  background-color: white;
+  outline: var(--outline);
+  box-shadow: var(--box-shadow);
+}
+
 .preview-text {
   resize: none;
   background-color: white;
@@ -103,7 +111,7 @@
   border-radius: 5px;
   color: black;
   padding: 1rem;
-  height: 7rem;
+  height: 8rem;
 }
 
 .text-container {

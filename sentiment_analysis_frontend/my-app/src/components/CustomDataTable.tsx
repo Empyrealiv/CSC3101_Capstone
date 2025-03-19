@@ -5,8 +5,13 @@ import { selectuploadCSVState } from "../selectors/index.ts";
 import { IUploadCSVResponse } from "../types/index";
 import { getEmotionMap } from "../pages/functions.ts";
 import "../assets/Components/index.css";
+import { addToast } from "../actions/index.ts";
 
-const CustomDataTable = () => {
+interface CustomDataTableProps {
+  setTextInfo: React.Dispatch<React.SetStateAction<string>>;
+}
+
+const CustomDataTable: React.FC<CustomDataTableProps> = ({ setTextInfo }) => {
   const [data, setData] = useState<IUploadCSVResponse | null>(null);
   const uploadCSVData = useSelector(selectuploadCSVState);
   const [emotionMap, setEmotionMap] = useState({});
@@ -17,17 +22,21 @@ const CustomDataTable = () => {
     if (uploadCSVData.isLoading) {
       return;
     }
-    setData(uploadCSVData.data);
-    setEmotionMap(getEmotionMap(uploadCSVData.data));
-    setEvaluationMode(uploadCSVData.data.evaluation_mode);
+    try {
+      setTextInfo("");
+      setData(uploadCSVData.data);
+      setEmotionMap(getEmotionMap(uploadCSVData.data));
+      setEvaluationMode(uploadCSVData.data.evaluation_mode);
+    } catch (error: any) {
+      dispatch(addToast("Error setting table data"));
+    }
   }, [uploadCSVData]);
 
   const isPredictionCorrect = (labelIndex: number) => {
     return (
       evaluationMode &&
       data?.labels &&
-      data.predicted_classes[labelIndex] !==
-        data.labels[labelIndex]
+      data.predicted_classes[labelIndex] !== data.labels[labelIndex]
     );
   };
 
@@ -45,7 +54,11 @@ const CustomDataTable = () => {
       <tbody>
         {data ? (
           data.texts.map((text, index) => (
-            <tr key={index} className={isPredictionCorrect(index) ? 'red-row' : ''}>
+            <tr
+              key={index}
+              className={isPredictionCorrect(index) ? "red-row" : ""}
+              onClick={() => setTextInfo(text)}
+            >
               <th scope="row">{index + 1}</th>
               <td className="text-column">{text}</td>
               <td>{emotionMap[data.predicted_classes[index]]}</td>

@@ -61,6 +61,11 @@
   justify-content: center;
   overflow-y: auto;
   max-height: 25rem;
+  height: 25rem;
+  border-radius: 5px;
+  outline: var(--outline);
+  box-shadow: var(--box-shadow);
+  background-color: white;
 }
 
 .red-row {
@@ -69,18 +74,38 @@
 
 .pie-chart-container {
   display: flex;
-  flex-grow: 1;
-  background-color: white;
+  justify-content: center;
+  background-color: var(--background-light);
   text-align: center;
-  color: black;
+  color: var(--text-color);
   border-radius: 5px;
   overflow-y: auto;
+  outline: var(--outline);
+  box-shadow: var(--box-shadow);
+  width: 100%;
 }
 
 .pie-chart {
   display: flex;
   flex-grow: 1;
-  background-color: white;
+  background-color: var(--background-light);
+}
+
+.modal-header {
+  background-color: var(--background-light) !important;
+  color: var(--text-color);
+  border-bottom: 1px solid var(--background-dark) !important;
+}
+
+.modal-body {
+  background-color: var(--background-light) !important;
+  color: var(--text-color);
+}
+
+.modal-footer {
+  background-color: var(--background-light) !important;
+  color: var(--text-color);
+  border-top: 1px solid var(--background-dark) !important;
 }
 
 .custom-table tbody tr {

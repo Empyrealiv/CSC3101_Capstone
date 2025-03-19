@@ -33,6 +33,8 @@ export const Dashboard = () => {
   const [models, setModels] = useState<string[]>([]);
   const [selectedModel, setSelectedModel] = useState<string>("Select a Model");
   const [loading, setLoading] = useState<boolean>(false);
+  const [pieEvaluationMode, setPieEvaluationMode] = useState(false);
+  const [disableEvalButton, setDisableEvalButton] = useState(true);
   const uploadCSVData = useSelector(selectuploadCSVState);
   const dispatch = useDispatch();
 
@@ -94,6 +96,10 @@ export const Dashboard = () => {
     setPredictResult(predictResults);
   };
 
+  const handleSwitchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setPieEvaluationMode(e.target.checked);
+  };
+
   return (
     <div className="page-container">
       <ToastManager />
@@ -143,11 +149,11 @@ export const Dashboard = () => {
             <span
               style={{
                 color:
-                  predictResult?.sentiment === "POSITIVE"
-                    ? "green"
-                    : predictResult?.sentiment === "NEGATIVE"
-                    ? "red"
-                    : "inherit",
+                  predictResult?.sentiment === "Positive"
+                    ? "rgb(30, 255, 0)"
+                    : predictResult?.sentiment === "Negative"
+                    ? "rgb(255, 0, 0)"
+                    : "rgb(250, 255, 0)",
               }}
             >
               {predictResult?.sentiment}
@@ -215,8 +221,12 @@ export const Dashboard = () => {
         <Container className="display-container">
           <Container>
             <Row>
-              <Col xs={4} className="custom-chart-container">
-                <Customchart />
+              <Col className="custom-chart-container col-md-4 col-sm-12">
+                <Customchart
+                  pieEvaluationMode={pieEvaluationMode}
+                  setDisableEvalButton={setDisableEvalButton}
+                  setPieEvaluationMode={setPieEvaluationMode}
+                />
                 <div className="evaluation-switch-container">
                   <Form.Label>Toggle PieChart View</Form.Label>
                   <Form.Check
@@ -224,21 +234,26 @@ export const Dashboard = () => {
                     id="piechart-switch"
                     label=""
                     className="piechart-switch"
+                    checked={pieEvaluationMode}
+                    onChange={handleSwitchChange}
+                    disabled={disableEvalButton}
                   />
                 </div>
-                <CustomEvalDataTable />
+                <div className="custom-eval-table-container">
+                  <CustomEvalDataTable />
+                </div>
               </Col>
-              <Col>
+              <Col className="col-md-8 col-sm-12">
                 <Container>
                   <Row className="custom-table-container">
-                    <CustomDataTable />
+                    <CustomDataTable setTextInfo={setTextInfo} />
                   </Row>
                   <br />
                   <Row>
                     <textarea
                       className="preview-text"
                       placeholder="Select a text to preview..."
-                      value={'test'}
+                      value={textInfo}
                       disabled={true}
                     />
                   </Row>

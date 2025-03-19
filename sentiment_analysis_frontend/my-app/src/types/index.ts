@@ -26,7 +26,7 @@ export interface IUploadCSVResponse {
     evaluation_mode: boolean
 }
 
-interface IMetrics {
+export interface IMetrics {
     accuracy: string
     f1: string
     recall: string

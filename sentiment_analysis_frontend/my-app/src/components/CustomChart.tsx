@@ -15,7 +15,17 @@ const COLORS = [
   "#FF6B6B",
 ];
 
-const Customchart = () => {
+interface CustomChartProps {
+  pieEvaluationMode: boolean;
+  setDisableEvalButton: React.Dispatch<React.SetStateAction<boolean>>;
+  setPieEvaluationMode: React.Dispatch<React.SetStateAction<boolean>>;
+}
+
+const Customchart: React.FC<CustomChartProps> = ({
+  pieEvaluationMode,
+  setDisableEvalButton,
+  setPieEvaluationMode,
+}) => {
   const [pieData, setPieData] = useState<{ name: string; value: number }[]>([]);
   const [evalPieData, setEvalPieData] = useState<
     { name: string; value: number }[]
@@ -27,56 +37,76 @@ const Customchart = () => {
     if (uploadCSVData.isLoading) {
       return;
     }
-    setPieData(
-      createChartData(
-        uploadCSVData.data.mode,
-        uploadCSVData.data.predicted_classes
-      )
-    );
-    if (uploadCSVData.data.evaluation_mode) {
-      setEvalPieData(
-        createChartData(uploadCSVData.data.mode, uploadCSVData.data.labels)
+    try {
+      setDisableEvalButton(true);
+      setPieEvaluationMode(false);
+      setPieData(
+        createChartData(
+          uploadCSVData.data.mode,
+          uploadCSVData.data.predicted_classes
+        )
       );
+      if (uploadCSVData.data.evaluation_mode) {
+        setEvalPieData(
+          createChartData(uploadCSVData.data.mode, uploadCSVData.data.labels)
+        );
+        setDisableEvalButton(false);
+      }
+    } catch (error: any) {
+      dispatch(addToast("Error setting pie chart data"));
     }
   }, [uploadCSVData]);
 
+  const showPieData = (
+    title: string,
+    data: { name: string; value: number }[]
+  ) => {
+    return (
+      <div>
+        {data.length > 0 ? (
+          <div>
+            <p>{title}</p>
+            <PieChart
+              width={window.innerWidth * 0.2}
+              height={window.innerWidth * 0.18}
+              className="pie-chart"
+            >
+              <Pie
+                data={data.filter((entry) => entry.value > 0)}
+                cx="50%"
+                cy="50%"
+                outerRadius={window.innerWidth * 0.06}
+                fill="#8884d8"
+                dataKey="value"
+                label
+              >
+                {data
+                  .filter((entry) => entry.value > 0)
+                  .map((entry, index) => (
+                    <Cell
+                      key={`cell-${index}`}
+                      fill={COLORS[index % COLORS.length]}
+                    />
+                  ))}
+              </Pie>
+              <Tooltip />
+              <Legend />
+            </PieChart>
+          </div>
+        ) : (
+          <div>
+            <p>No data available</p>
+          </div>
+        )}
+      </div>
+    );
+  };
+
   return (
     <div className="pie-chart-container">
-      {pieData.length > 0 ? (
-        <div>
-        <p>Predicted PieChart</p>
-        <PieChart
-          width={window.innerWidth * 0.2}
-          height={window.innerWidth * 0.18}
-          className="pie-chart"
-        >
-          <Pie
-            data={pieData.filter((entry) => entry.value > 0)}
-            cx="50%"
-            cy="50%"
-            outerRadius={window.innerWidth * 0.06}
-            fill="#8884d8"
-            dataKey="value"
-            label
-          >
-            {pieData
-              .filter((entry) => entry.value > 0)
-              .map((entry, index) => (
-                <Cell
-                  key={`cell-${index}`}
-                  fill={COLORS[index % COLORS.length]}
-                />
-              ))}
-          </Pie>
-          <Tooltip />
-          <Legend />
-        </PieChart>
-        </div>
-      ) : (
-        <div>
-          <p>No data available</p>
-        </div>
-      )}
+      {pieEvaluationMode
+        ? showPieData("Actual Pie Chart", evalPieData)
+        : showPieData("Predicted Pie Chart", pieData)}
     </div>
   );
 };

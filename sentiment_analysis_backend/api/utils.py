@@ -34,13 +34,13 @@ BASE_MODEL_PATH = os.path.join(
     "Models",
     "base_model",
 )
-WHLA_FINAL_MODEL_PATH = os.path.join(
+BINARY_PROPOSED_MODEL_PATH = os.path.join(
     os.path.dirname(__file__),
     "..",
     "..",
     "sentiment_analysis_backend",
     "Models",
-    "whla_final_model",
+    "binary_proposed_model",
 )
 TERNARY_PROPOSED_MODEL_PATH = os.path.join(
     os.path.dirname(__file__),
@@ -108,25 +108,25 @@ def load_custom_model(model_path):
 
 
 models = {
-    "Base Model": {
+    "Binary SA Base Model": {
         "model": BertForSequenceClassification.from_pretrained(BASE_MODEL_PATH),
         "tokenizer": BertTokenizer.from_pretrained(BASE_MODEL_PATH),
         "label_map": BINARY_EMOTIONS_MAP,
         "mode": "binary",
     },
-    "WHLA Final Model": {
-        "model": load_custom_model(WHLA_FINAL_MODEL_PATH),
+    "Binary SA Proposed Model": {
+        "model": load_custom_model(BINARY_PROPOSED_MODEL_PATH),
         "tokenizer": BertTokenizer.from_pretrained(MLM_MODEL_PATH),
         "label_map": BINARY_EMOTIONS_MAP,
         "mode": "binary",
     },
-    "Ternary Proposed Model": {
+    "Ternary SA Proposed Model": {
         "model": load_custom_model(TERNARY_PROPOSED_MODEL_PATH),
         "tokenizer": BertTokenizer.from_pretrained(MLM_MODEL_PATH),
         "label_map": TENARY_EMOTIONS_MAP,
         "mode": "ternary",
     },
-    "Emotions Proposed Model": {
+    "Emotions SA Proposed Model": {
         "model": load_custom_model(EMOTIONS_PROPOSED_MODEL_PATH),
         "tokenizer": BertTokenizer.from_pretrained(MLM_MODEL_PATH),
         "label_map": EMOTIONS_6_MAP,
@@ -138,7 +138,7 @@ for model_info in models.values():
     model_info["model"].eval()
 
 
-def predict(text: str, model_name: str):
+def predict(text: str, model_name: str, with_label: bool):
     if model_name not in models:
         raise ValueError(
             f"Invalid model name: {model_name}. Available models: {list(models.keys())}"
@@ -164,6 +164,9 @@ def predict(text: str, model_name: str):
 
     prediction = torch.argmax(probabilities, dim=-1).item()
     confidence = probabilities[0, prediction].item()
+
+    if with_label:
+        prediction = label_map[prediction]
 
     return prediction, confidence
 
@@ -280,7 +283,7 @@ def evaluate(model_name: str, dataset):
         model=model,
         args=training_args,
         data_collator=data_collator,
-        compute_metrics=binary_compute_metrics,
+        compute_metrics=compute_metrics_fn,
     )
 
     try:
@@ -307,11 +310,11 @@ def evaluate(model_name: str, dataset):
         "predicted_classes": predicted_classes,
         "confidence_scores": confidence_scores,
         "metrics": {
-            "accuracy": metrics["test_accuracy"],
-            "f1": metrics["test_f1"],
-            "precision": metrics["test_precision"],
-            "recall": metrics["test_recall"],
-            "loss": metrics["test_loss"],
+            "accuracy": f"{metrics['test_accuracy'] * 100:.1f}%",
+            "f1": f"{metrics['test_f1']:.2g}",
+            "precision": f"{metrics['test_precision']:.2g}",
+            "recall": f"{metrics['test_recall']:.2g}",
+            "loss": f"{metrics['test_loss']:.2g}",
         },
         "mode": mode,
         "evaluation_mode": True,
