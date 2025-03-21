@@ -7,6 +7,7 @@
     "axios": "^1.7.9",
     "bootstrap": "^5.3.3",
     "cra-template-typescript": "1.2.0",
+    "emoji-regex": "^10.4.0",
     "papaparse": "^5.5.1",
     "react": "^19.0.0",
     "react-bootstrap": "^2.10.7",

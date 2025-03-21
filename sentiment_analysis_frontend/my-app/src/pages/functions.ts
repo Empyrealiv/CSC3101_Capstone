@@ -6,11 +6,32 @@ import {
   EMOTIONS_6_MAP,
   GOEMOTIONS_MAP,
 } from "./constants.ts";
+import emojiRegex from 'emoji-regex';
+
+const splitTextWithEmojis = (text) => {
+  const regex = emojiRegex();
+  
+  const basicTokens = text
+    .split(/(\s+|[.,!?;:'"()[\]{}])/)
+    .filter(token => token.length > 0);
+  
+  const finalTokens: string[] = [];
+  
+  for (const token of basicTokens) {
+    if (regex.test(token)) {
+      const withMarkers = token.replace(regex, '\u0000$&\u0000');
+      const emojiTokens = withMarkers.split('\u0000').filter(t => t.length > 0);
+      finalTokens.push(...emojiTokens);
+    } else {
+      finalTokens.push(token);
+    }
+  }
+  
+  return finalTokens;
+};
 
 export const processText = (text: string, tokens: IWordImportance[]) => {
-  const rawTokens = text
-    .split(/(\s+|[.,!?;:'"()[\]{}])/)
-    .filter((token) => token.length > 0);
+  const rawTokens = splitTextWithEmojis(text)
 
   let currentTokenIndex = 0;
   const tokenInfo: ITokenInfo[] = [];
@@ -19,7 +40,6 @@ export const processText = (text: string, tokens: IWordImportance[]) => {
   for (let i = 0; i < rawTokens.length; i++) {
     const rawToken = rawTokens[i];
     const isSpace = /^\s+$/.test(rawToken);
-
     if (isSpace) {
       tokenInfo.push({
         text: rawToken,
