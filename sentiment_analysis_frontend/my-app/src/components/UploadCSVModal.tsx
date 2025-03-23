@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import { Modal, Button, Form } from "react-bootstrap";
 import { useDispatch } from "react-redux";
 import {
@@ -8,7 +8,7 @@ import {
   uploadCSVSuccess,
 } from "../actions/index.ts";
 import sentimentApi from "../api/index.ts";
-import { PREDICTED_STATES } from "../pages/constants.ts";
+import { PREDICTED_STATES, ERROR_MESSAGE } from "../pages/constants.ts";
 import "../assets/Components/index.css";
 
 interface UploadCSVModalProps {
@@ -59,8 +59,8 @@ const UploadCSVModal: React.FC<UploadCSVModalProps> = ({
       dispatch(uploadCSVSuccess(response.data));
       setPredictedState(PREDICTED_STATES.multi);
     } catch (error: any) {
-      dispatch(uploadCSVFailure(error.response.data.error));
-      dispatch(addToast(error.response.data.error));
+      dispatch(uploadCSVFailure(ERROR_MESSAGE.E01));
+      dispatch(addToast(ERROR_MESSAGE.E01));
     }
   };
 

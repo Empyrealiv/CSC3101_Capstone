@@ -6,6 +6,7 @@ import { IUploadCSVResponse } from "../types/index";
 import { getEmotionMap } from "../pages/functions.ts";
 import "../assets/Components/index.css";
 import { addToast } from "../actions/index.ts";
+import { ERROR_MESSAGE } from "../pages/constants.ts";
 
 interface CustomDataTableProps {
   setTextInfo: React.Dispatch<React.SetStateAction<string>>;
@@ -28,8 +29,9 @@ const CustomDataTable: React.FC<CustomDataTableProps> = ({ setTextInfo }) => {
       setEmotionMap(getEmotionMap(uploadCSVData.data));
       setEvaluationMode(uploadCSVData.data.evaluation_mode);
     } catch (error: any) {
-      dispatch(addToast("Error setting table data"));
+      dispatch(addToast(ERROR_MESSAGE.E01));
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [uploadCSVData]);
 
   const isPredictionCorrect = (labelIndex: number) => {

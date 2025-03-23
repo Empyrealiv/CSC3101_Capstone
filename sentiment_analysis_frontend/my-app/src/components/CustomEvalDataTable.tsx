@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { selectuploadCSVState } from "../selectors/index.ts";
 import { addToast } from "../actions/index.ts";
 import { IMetrics } from "../types/index.ts";
+import { ERROR_MESSAGE } from "../pages/constants.ts";
 
 const CustomEvalDataTable = () => {
   const [data, setData] = useState<IMetrics | null>(null);
@@ -22,8 +23,9 @@ const CustomEvalDataTable = () => {
         setData(null);
       }
     } catch (error: any) {
-      dispatch(addToast("Error setting eval table data"));
+      dispatch(addToast(ERROR_MESSAGE.E01));
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [uploadCSVData]);
   return (
     <Table bordered hover className="custom-table">

@@ -55,3 +55,7 @@ export const GOEMOTIONS_MAP = {
   "26": "surprise",
   "27": "neutral",
 };
+
+export const ERROR_MESSAGE = {
+  E01: "Technical Error Occurred",
+}

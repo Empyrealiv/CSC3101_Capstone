@@ -1,5 +1,9 @@
 ML/Embeddings
-sentiment_analysis_backend/Models
+sentiment_analysis_backend/Models/base_model
+sentiment_analysis_backend/Models/binary_proposed_model
+sentiment_analysis_backend/Models/emotions_proposed_model
+sentiment_analysis_backend/Models/etc
+sentiment_analysis_backend/Models/mlm_pretraining_6
+sentiment_analysis_backend/Models/ternary_proposed_model
 venv
 Archive
-Modified models

@@ -15,7 +15,7 @@ import CustomEvalDataTable from "../../components/CustomEvalDataTable.tsx";
 import sentimentApi from "../../api/index.ts";
 import UploadCSVModal from "../../components/UploadCSVModal.tsx";
 import "../../assets/Dashboard/index.css";
-import { PREDICTED_STATES } from "../constants.ts";
+import { PREDICTED_STATES, ERROR_MESSAGE } from "../constants.ts";
 import { useDispatch, useSelector } from "react-redux";
 import { selectuploadCSVState } from "../../selectors/index.ts";
 import { ToastManager } from "../../components/ToastManager.tsx";
@@ -49,12 +49,13 @@ export const Dashboard = () => {
         setModels(response.data.models);
         setSelectedModel(response.data.models[0]);
       } catch (error: any) {
-        dispatch(addToast(error.message));
+        dispatch(addToast(ERROR_MESSAGE.E01));
       } finally {
         setLoading(false);
       }
     };
     fetchModels();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const validations = () => {
@@ -78,7 +79,7 @@ export const Dashboard = () => {
       handlePredictResponse(response.data);
       setPredictedState(PREDICTED_STATES.single);
     } catch (error: any) {
-      dispatch(addToast(error.message));
+      dispatch(addToast(ERROR_MESSAGE.E01));
     } finally {
       setLoading(false);
     }

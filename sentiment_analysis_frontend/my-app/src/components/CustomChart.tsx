@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { selectuploadCSVState } from "../selectors/index.ts";
 import { createChartData } from "../pages/functions.ts";
 import { addToast } from "../actions/index.ts";
+import { ERROR_MESSAGE } from "../pages/constants.ts";
 import "../assets/Components/index.css";
 
 const COLORS = [
@@ -53,8 +54,9 @@ const Customchart: React.FC<CustomChartProps> = ({
         setDisableEvalButton(false);
       }
     } catch (error: any) {
-      dispatch(addToast("Error setting pie chart data"));
+      dispatch(addToast(ERROR_MESSAGE.E01));
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [uploadCSVData]);
 
   const showPieData = (
