@@ -6,7 +6,7 @@ The code for the API integration currently only accepts BERT type models and mak
 
 1. Place the model into the Models folder
 
-2. If it is a custom model using the WHLA from this repository and making using a JSON config and .pth file, ensure the naming convention follows the following  
+2. If it is a custom model using the WHLA wrapper class from this repository and making using a JSON config and .pth file, ensure the naming convention follows the following  
     - Folder name: Any folder name will work
     - JSON config: [Folder name]_config.json
     - pth file: [Folder name].pth
